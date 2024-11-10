@@ -1,35 +1,31 @@
-image: mcr.microsoft.com/azure-cli:latest
+image: your-custom-image:latest  # Replace with your custom Docker image
 
 stages:
   - build
   - deploy
 
 variables:
-  AZURE_STATIC_WEB_APP_NAME: "journey"  # Replace with your Azure Static Web App name
-  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Azure Resource Group name
-  AZURE_REGION: "eastus"  # Replace with the Azure Region of your Static Web App
-  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN  # Set in GitLab CI/CD Secrets
+  AZURE_STATIC_WEB_APP_NAME: "journey"
+  AZURE_RESOURCE_GROUP: "JRNY"
+  AZURE_REGION: "eastus"
+  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN
 
 cache:
   paths:
     - node_modules/
 
 before_script:
-  # Install Node.js and NPM for Debian/Ubuntu-based images
-  - apt-get update && apt-get install -y curl lsb-release
-  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-  - apt-get install -y nodejs
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apt-get install -y zip  # Install zip utility
+  - apt-get install -y zip  # Install zip utility if needed
   - az --version  # Verify Azure CLI installation
 
 build:
   stage: build
   script:
-    - cd jrny-app  # Ensure you're in the correct directory
-    - npm install  # Install dependencies
-    - ng build --configuration production  # Build the Angular app for production
-    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the build output for deployment
+    - cd jrny-app
+    - npm install
+    - ng build --configuration production
+    - zip -r dist/my-angular-app.zip dist/jrny-app
   artifacts:
     paths:
       - dist/
@@ -42,4 +38,4 @@ deploy:
   environment:
     name: production
   only:
-    - main  # Ensure deployment happens only on changes to the main branch
+    - main
