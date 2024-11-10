@@ -37,6 +37,6 @@ deploy:
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
     - az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set Azure subscription
     - az staticwebapp create --name $AZURE_STATIC_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --location $AZURE_REGION --sku Free  # Create the Static Web App if not exists
-    - az staticwebapp deploy --name $AZURE_STATIC_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --src dist/my-angular-app.zip  # Deploy the zip to Azure Static Web App
+    - az staticwebapp upload --name $AZURE_STATIC_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --src dist/my-angular-app.zip
   only:
     - main  # Ensure deployment happens only on changes to the main branch
