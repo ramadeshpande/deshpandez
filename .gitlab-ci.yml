@@ -12,7 +12,7 @@ variables:
 
 cache:
   paths:
-    - node_modules/
+    - jrny-app/node_modules/
 
 before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
@@ -30,7 +30,7 @@ build:
     - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the correct build output (jrny-app)
   artifacts:
     paths:
-      - dist/
+      - jrny-app/dist/
     expire_in: 1 hour   # Optional, set expiration for artifacts
 
 deploy:
@@ -45,7 +45,7 @@ deploy:
     # Set the API token as an environment variable and deploy using swa CLI
     - export SWA_CLI_DEPLOYMENT_TOKEN=${AZURE_STATIC_WEB_APPS_API_TOKEN}
     # Deploy using swa CLI (ensure correct path)
-    - swa deploy ./dist/jrny-app --env production   # Deploy from the correct path (jrny-app)
+    - swa deploy ./jrny-app/dist/jrny-app --env production   # Deploy from the correct path (jrny-app)
   environment:
     name: production
   only:
