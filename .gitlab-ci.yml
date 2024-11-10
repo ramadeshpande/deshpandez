@@ -18,6 +18,7 @@ before_script:
 build:
   stage: build
   script:
+    - cd jrny-app  # Change to the correct directory
     - npm install  # Use npm install instead of npm ci if package-lock.json is not available
     - ng build --prod  # Build the Angular app for production
     - zip -r dist/my-angular-app.zip dist/journey  # Zip the build output for deployment
