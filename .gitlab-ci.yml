@@ -5,23 +5,22 @@ stages:
   - deploy
 
 variables:
-  AZURE_WEBAPP_NAME: "journey" # Replace with your Azure App name
-  AZURE_RESOURCE_GROUP: "JRNY" # Replace with your Resource Group name
+  AZURE_WEBAPP_NAME: "journey"  # Replace with your Azure App name
+  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Resource Group name
 
 cache:
   paths:
     - node_modules/
 
 before_script:
-  - npm install -g @angular/cli
-  - apt-get install -y nodejs
+  - npm install -g @angular/cli  # Install Angular CLI globally
 
 build:
   stage: build
   script:
-    - npm ci
-    - ng build --prod
-    - zip -r dist/my-angular-app.zip dist/journey
+    - npm ci  # Clean install dependencies based on package-lock.json
+    - ng build --prod  # Build the Angular app for production
+    - zip -r dist/my-angular-app.zip dist/journey  # Zip the build output for deployment
   artifacts:
     paths:
       - dist/
@@ -29,8 +28,8 @@ build:
 deploy:
   stage: deploy
   script:
-    - npm install -g azure-cli
-    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-    - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip
+    - npm install -g azure-cli  # Install Azure CLI
+    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
+    - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip  # Deploy the zip to Azure
   only:
-    - main
+    - main  # Ensure deployment happens only on changes to the main branch
