@@ -5,20 +5,22 @@ stages:
   - deploy
 
 variables:
-  AZURE_STATIC_WEB_APP_NAME: "journey"
-  AZURE_RESOURCE_GROUP: "JRNY"
-  AZURE_REGION: "eastus"
-  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN
+  AZURE_STATIC_WEB_APP_NAME: "journey"  # Replace with your Azure Static Web App name
+  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Azure Resource Group name
+  AZURE_REGION: "eastus"  # Replace with the Azure Region of your Static Web App
+  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN  # Set in GitLab CI/CD Secrets
 
 cache:
   paths:
     - node_modules/
 
 before_script:
-  # Install Node.js and NPM for Alpine Linux-based images
-  - apk update && apk add --no-cache nodejs npm
+  # Install Node.js and NPM for Debian/Ubuntu-based images
+  - apt-get update && apt-get install -y curl lsb-release
+  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs npm
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apk add --no-cache zip curl lsb-release  # Install zip utility and other dependencies if needed
+  - apt-get install -y zip  # Install zip utility if needed
   - az --version  # Verify Azure CLI installation
 
 build:
