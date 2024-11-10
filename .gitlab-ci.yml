@@ -5,9 +5,10 @@ stages:
   - deploy
 
 variables:
-  AZURE_STATIC_WEBAPP_NAME: "journey"  # Replace with your Azure Static Web App name
-  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Resource Group name
-  AZURE_REGION: "eastus"  # The Azure region your Static Web App is hosted in (e.g., eastus)
+  AZURE_STATIC_WEB_APP_NAME: "journey"  # Replace with your Azure Static Web App name
+  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Azure Resource Group name
+  AZURE_REGION: "eastus"  # Replace with the Azure Region of your Static Web App
+  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN  # Set in GitLab CI/CD Secrets
 
 cache:
   paths:
@@ -35,8 +36,8 @@ deploy:
   stage: deploy
   script:
     - npm install -g azure-cli  # Install Azure CLI
-    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login using a service principal (if required)
+    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
     - az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set Azure subscription
-    - az staticwebapp deploy --name $AZURE_STATIC_WEB_APP_NAME --resource-group $AZURE_RESOURCE_GROUP --src dist/my-angular-app.zip --api-token $AZURE_STATIC_WEB_APPS_API_TOKEN  # Deploy using the API token
+    - az staticwebapp upload --name $AZURE_STATIC_WEB_APP_NAME --resource-group $AZURE_RESOURCE_GROUP --src dist/my-angular-app.zip --api-token $AZURE_STATIC_WEB_APPS_API_TOKEN  # Deploy the zip to Azure Static Web App
   only:
     - main  # Ensure deployment happens only on changes to the main branch
