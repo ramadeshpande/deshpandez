@@ -16,7 +16,7 @@ before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
   - apt-get update && apt-get install -y zip  # Install zip utility
   - apt-get update && apt-get install -y curl lsb-release
-  - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
   - az --version
 
 build:
