@@ -27,7 +27,7 @@ build:
     - npm install  # Install dependencies
     - ng build --configuration production  # Build the Angular app for production
     - ls dist/   # List files in dist folder to verify if it exists and contains output
-    - zip -r dist/my-angular-app.zip dist/your-project-name  # Zip the build output for deployment (replace 'your-project-name' with actual project name)
+    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the correct build output (jrny-app)
   artifacts:
     paths:
       - dist/
@@ -45,7 +45,7 @@ deploy:
     # Set the API token as an environment variable and deploy using swa CLI
     - export SWA_CLI_DEPLOYMENT_TOKEN=${AZURE_STATIC_WEB_APPS_API_TOKEN}
     # Deploy using swa CLI (ensure correct path)
-    - swa deploy ./dist/your-project-name --env production   # Replace 'your-project-name' with actual project name from angular.json
+    - swa deploy ./dist/jrny-app --env production   # Deploy from the correct path (jrny-app)
   environment:
     name: production
   only:
