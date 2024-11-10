@@ -36,6 +36,7 @@ deploy:
     - npm install -g azure-cli  # Install Azure CLI
     - az ad sp show --id $AZURE_CLIENT_ID
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
+    - az account set --subscription bc30874b-4c76-4266-b96f-f40a36393d5c
     - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip  # Deploy the zip to Azure
   only:
     - main  # Ensure deployment happens only on changes to the main branch
