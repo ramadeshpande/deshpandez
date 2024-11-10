@@ -14,6 +14,7 @@ cache:
 
 before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
+  - apt-get update && apt-get install -y zip  # Install zip utility
 
 build:
   stage: build
@@ -21,7 +22,7 @@ build:
     - cd jrny-app  # Ensure you're in the correct directory
     - npm install  # Install dependencies
     - ng build --configuration production  # Build the Angular app for production
-    - zip -r dist/my-angular-app.zip dist/journey  # Zip the build output for deployment
+    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the build output for deployment
   artifacts:
     paths:
       - dist/
