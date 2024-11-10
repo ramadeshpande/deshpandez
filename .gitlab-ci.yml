@@ -1,4 +1,4 @@
-image: your-custom-image:latest  # Replace with your custom Docker image
+image: mcr.microsoft.com/azure-cli:latest
 
 stages:
   - build
@@ -15,8 +15,10 @@ cache:
     - node_modules/
 
 before_script:
+  # Install Node.js and NPM for Alpine Linux-based images
+  - apk update && apk add --no-cache nodejs npm
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apt-get install -y zip  # Install zip utility if needed
+  - apk add --no-cache zip curl lsb-release  # Install zip utility and other dependencies if needed
   - az --version  # Verify Azure CLI installation
 
 build:
