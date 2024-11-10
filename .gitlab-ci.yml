@@ -40,8 +40,9 @@ deploy:
     # Verify swa installation
     - swa --version
   script:
-    # Deploy using swa CLI with the provided API token
-    - swa deploy ./dist/jrny-app --env production --api-token ${AZURE_STATIC_WEB_APPS_API_TOKEN}
+    # Set the API token as an environment variable and deploy using swa CLI
+    - export SWA_CLI_DEPLOYMENT_TOKEN=${AZURE_STATIC_WEB_APPS_API_TOKEN}
+    - swa deploy ./dist/jrny-app --env production
   environment:
     name: production
   only:
