@@ -5,8 +5,9 @@ stages:
   - deploy
 
 variables:
-  AZURE_WEBAPP_NAME: "journey"  # Replace with your Azure App name
+  AZURE_STATIC_WEBAPP_NAME: "journey"  # Replace with your Azure Static Web App name
   AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Resource Group name
+  AZURE_REGION: "East US 2"  # The Azure region your Static Web App is hosted in (e.g., eastus)
 
 cache:
   paths:
@@ -16,7 +17,7 @@ before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
   - apt-get update && apt-get install -y zip  # Install zip utility
   - apt-get update && apt-get install -y curl lsb-release
-  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash  # Install Azure CLI
   - az --version  # Verify Azure CLI installation
 
 build:
@@ -33,9 +34,9 @@ build:
 deploy:
   stage: deploy
   script:
-    - npm install -g azure-cli  # Install Azure CLI
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
     - az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set Azure subscription
-    - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip  # Deploy the zip to Azure
+    - az staticwebapp create --name $AZURE_STATIC_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --location $AZURE_REGION --sku Free  # Create the Static Web App if not exists
+    - az staticwebapp deploy --name $AZURE_STATIC_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --src dist/my-angular-app.zip  # Deploy the zip to Azure Static Web App
   only:
     - main  # Ensure deployment happens only on changes to the main branch
