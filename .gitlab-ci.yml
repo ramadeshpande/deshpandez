@@ -1,4 +1,4 @@
-image: node:18
+image: mcr.microsoft.com/azure-cli:latest
 
 stages:
   - build
@@ -15,9 +15,11 @@ cache:
     - node_modules/
 
 before_script:
+  # Install Node.js and NPM manually
+  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs
   - npm install -g @angular/cli  # Install Angular CLI globally
   - apt-get update && apt-get install -y zip  # Install zip utility
-  - apt-get update && apt-get install -y curl lsb-release
   - curl -sL https://aka.ms/InstallAzureCLIDeb | bash  # Install Azure CLI
   - az --version  # Verify Azure CLI installation
 
@@ -34,7 +36,6 @@ build:
 
 deploy:
   stage: deploy
-  image: mcr.microsoft.com/azure-cli:latest  # Use Azure CLI for deployment
   script:
     # Authenticate using the Azure Static Web Apps API token
     - az staticwebapp upload --name ${AZURE_STATIC_WEB_APP_NAME} --resource-group ${AZURE_RESOURCE_GROUP} --source-path dist/jrny-app --token ${AZURE_STATIC_WEB_APPS_API_TOKEN}
