@@ -36,9 +36,8 @@ deploy:
   stage: deploy
   image: mcr.microsoft.com/azure-cli:latest  # Use Azure CLI for deployment
   script:
-    - az login --service-principal -u ${AZURE_CLIENT_ID} -p ${AZURE_CLIENT_SECRET} --tenant ${AZURE_TENANT_ID}
-    - az account set -s ${AZURE_SUBSCRIPTION_ID}
-    - az staticwebapp create --name ${AZURE_WEBAPP_NAME} --resource-group ${AZURE_RESOURCE_GROUP} --source . --location eastus
+    # Authenticate using the Azure Static Web Apps API token
+    - az staticwebapp upload --name ${AZURE_STATIC_WEB_APP_NAME} --resource-group ${AZURE_RESOURCE_GROUP} --source-path dist/jrny-app --token ${AZURE_STATIC_WEB_APPS_API_TOKEN}
   environment:
     name: production
   only:
