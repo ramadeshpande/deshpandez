@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/azure-cli:latest
+image: node:18
 
 stages:
   - build
@@ -15,30 +15,33 @@ cache:
     - node_modules/
 
 before_script:
-  # Install Node.js and NPM for Debian/Ubuntu-based images
-  - apt-get update && apt-get install -y curl lsb-release
-  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-  - apt-get install -y nodejs npm
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apt-get install -y zip  # Install zip utility if needed
+  - apt-get update && apt-get install -y zip curl lsb-release
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash  # Install Azure CLI
   - az --version  # Verify Azure CLI installation
 
 build:
   stage: build
   script:
-    - cd jrny-app
-    - npm install
-    - ng build --configuration production
-    - zip -r dist/my-angular-app.zip dist/jrny-app
+    - cd jrny-app  # Ensure you're in the correct directory
+    - npm install  # Install dependencies
+    - ng build --configuration production  # Build the Angular app for production
+    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the build output for deployment
   artifacts:
     paths:
       - dist/
 
 deploy:
   stage: deploy
+  image: node:18
+  before_script:
+    # Install the Azure Static Web Apps CLI (swa)
+    - npm install -g @azure/static-web-apps-cli
+    # Verify swa installation
+    - swa --version
   script:
-    # Authenticate using the Azure Static Web Apps API token
-    - az staticwebapp upload --name ${AZURE_STATIC_WEB_APP_NAME} --resource-group ${AZURE_RESOURCE_GROUP} --source-path dist/jrny-app --token ${AZURE_STATIC_WEB_APPS_API_TOKEN}
+    # Deploy using swa CLI with the provided API token
+    - swa deploy ./dist/jrny-app --env production --api-token ${AZURE_STATIC_WEB_APPS_API_TOKEN}
   environment:
     name: production
   only:
