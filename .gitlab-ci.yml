@@ -7,7 +7,7 @@ stages:
 variables:
   AZURE_STATIC_WEBAPP_NAME: "journey"  # Replace with your Azure Static Web App name
   AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Resource Group name
-  AZURE_REGION: "East US 2"  # The Azure region your Static Web App is hosted in (e.g., eastus)
+  AZURE_REGION: "eastus"  # The Azure region your Static Web App is hosted in (e.g., eastus)
 
 cache:
   paths:
