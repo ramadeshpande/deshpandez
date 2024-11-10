@@ -14,13 +14,18 @@ cache:
 
 before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
+  - apt-get update && apt-get install -y zip  # Install zip utility
+  - apt-get update && apt-get install -y curl lsb-release
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+  - az --version  # Verify Azure CLI installation
 
 build:
   stage: build
   script:
-    - npm ci  # Clean install dependencies based on package-lock.json
-    - ng build --prod  # Build the Angular app for production
-    - zip -r dist/my-angular-app.zip dist/journey  # Zip the build output for deployment
+    - cd jrny-app  # Ensure you're in the correct directory
+    - npm install  # Install dependencies
+    - ng build --configuration production  # Build the Angular app for production
+    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the build output for deployment
   artifacts:
     paths:
       - dist/
@@ -29,7 +34,9 @@ deploy:
   stage: deploy
   script:
     - npm install -g azure-cli  # Install Azure CLI
+    - az ad sp show --id $AZURE_CLIENT_ID  # Verify service principal
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
+    - az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set Azure subscription
     - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip  # Deploy the zip to Azure
   only:
     - main  # Ensure deployment happens only on changes to the main branch
