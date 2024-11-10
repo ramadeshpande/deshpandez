@@ -15,11 +15,12 @@ cache:
     - node_modules/
 
 before_script:
-  # Install Node.js and NPM for Alpine Linux
-  - apk update && apk add --no-cache nodejs npm
+  # Install Node.js and NPM for Debian/Ubuntu-based images
+  - apt-get update && apt-get install -y curl lsb-release
+  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apk add --no-cache zip curl lsb-release  # Install zip utility and other dependencies
-  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash  # Install Azure CLI
+  - apt-get install -y zip  # Install zip utility
   - az --version  # Verify Azure CLI installation
 
 build:
