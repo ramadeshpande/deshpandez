@@ -5,18 +5,19 @@ stages:
   - deploy
 
 variables:
-  AZURE_WEBAPP_NAME: "journey"  # Replace with your Azure App name
-  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Resource Group name
+  AZURE_STATIC_WEB_APP_NAME: "journey"  # Replace with your Azure Static Web App name
+  AZURE_RESOURCE_GROUP: "JRNY"  # Replace with your Azure Resource Group name
+  AZURE_REGION: "eastus"  # Replace with the Azure Region of your Static Web App
+  AZURE_STATIC_WEB_APPS_API_TOKEN: $AZURE_STATIC_WEB_APPS_API_TOKEN  # Set in GitLab CI/CD Secrets
 
 cache:
   paths:
-    - node_modules/
+    - jrny-app/node_modules/
 
 before_script:
   - npm install -g @angular/cli  # Install Angular CLI globally
-  - apt-get update && apt-get install -y zip  # Install zip utility
-  - apt-get update && apt-get install -y curl lsb-release
-  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+  - apt-get update && apt-get install -y zip curl lsb-release
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash  # Install Azure CLI
   - az --version  # Verify Azure CLI installation
 
 build:
@@ -25,18 +26,27 @@ build:
     - cd jrny-app  # Ensure you're in the correct directory
     - npm install  # Install dependencies
     - ng build --configuration production  # Build the Angular app for production
-    - zip -r dist/my-angular-app.zip dist/jrny-app  # Zip the build output for deployment
+    - ls dist/   # List files in dist folder to verify if it exists and contains output (ensure index.html exists)
+    - zip -r dist/my-angular-app.zip dist/jrny-app/browser/  # Zip the correct build output (jrny-app/browser)
   artifacts:
     paths:
-      - dist/
+      - jrny-app/dist/
+    expire_in: 1 hour   # Optional, set expiration for artifacts
 
 deploy:
   stage: deploy
+  image: node:18
+  before_script:
+    # Install the Azure Static Web Apps CLI (swa)
+    - npm install -g @azure/static-web-apps-cli
+    # Verify swa installation
+    - swa --version
   script:
-    - npm install -g azure-cli  # Install Azure CLI
-    - az ad sp show --id $AZURE_CLIENT_ID  # Verify service principal
-    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID  # Login to Azure using service principal
-    - az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set Azure subscription
-    - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src dist/my-angular-app.zip  # Deploy the zip to Azure
+    # Set the API token as an environment variable and deploy using swa CLI
+    - export SWA_CLI_DEPLOYMENT_TOKEN=${AZURE_STATIC_WEB_APPS_API_TOKEN}
+    # Deploy using swa CLI (ensure correct path)
+    - swa deploy ./jrny-app/dist/jrny-app/browser --env production   # Deploy from the correct path (jrny-app/browser)
+  environment:
+    name: production
   only:
-    - main  # Ensure deployment happens only on changes to the main branch
+    - main
