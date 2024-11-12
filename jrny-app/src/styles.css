@@ -1,1 +1,419 @@
 /* You can add global styles to this file, and also import other style files */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(241, 239, 231);
+    color: rgb(0, 0, 0);
+    margin: 0;
+    padding: 0;
+  }
+  
+  .inverted-colors {
+    background-color: rgb(30, 30, 30);
+    color: white;
+  }
+  
+  .inverted-colors .top-section {
+    background-color: black; /* Custom background color for column-2 */
+    color: white; /* Custom text color for column-2 */
+  }
+  
+  .inverted-colors .bottom-section {
+    background-color: black; /* Custom background color for column-2 */
+    color: white; /* Custom text color for column-2 */
+  }
+  
+  .inverted-colors .column-3 {
+    background-color: black; /* Custom background color for column-3 */
+    color: lightgrey; /* Custom text color for column-3 */
+  }
+  
+  .inverted-colors #timer-card {
+    background-color: rgb(30, 30, 30); /* Custom background color for timer-card */
+    color: white; 
+  }
+  
+  .inverted-colors .task-checkbox {
+    margin-right: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  .inverted-colors .task-checkbox:checked {
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .inverted-colors .task-title {
+    margin: 0;
+  }
+  
+  .inverted-colors #submitButton {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    border: 1px solid rgb(30, 30, 30);
+  }
+  
+  .inverted-colors #submitButton:hover {
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+  }
+  
+  .inverted-colors .task-card {
+    background-color: rgb(30, 30, 30);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  #timer-card {
+    background-color: rgb(30, 30, 30);
+    border-radius: 10px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container {
+    height: calc(100% - 10px);
+    box-sizing: border-box;
+  }
+  
+  .column {
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .column-1 {
+    color: rgb(255, 255, 255);
+    width: 8%;
+    margin-left: 15px;
+    position: relative;
+  }
+  
+  .column-1 svg {
+    position: absolute;
+    bottom: 5%;
+    left: 50%; /* Center the image horizontally */
+    transform: translateX(-50%); /* Adjust to center the image precisely */
+    max-width: 40px;
+    border-radius: 10px;
+  }
+  
+  .column-1 img {
+    position: absolute;
+    top: 20px; /* Adjust this value to position the image from the top */
+    left: 50%; /* Center the image horizontally */
+    transform: translateX(-50%); /* Adjust to center the image precisely */
+    max-width: 70px;
+    border-radius: 10px;
+  }
+  
+  .column-2 {
+    width: 62%;
+    padding: 0px;
+    margin-left: 20px;
+    margin-right: 20px;
+    overflow-y: hidden;
+  }
+  
+  .top-section {
+    padding: 10px;
+    padding-left: 20px;
+    height: calc(15% - 10px);
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bottom-section {
+    margin-top: 15px;
+    padding: 10px;
+    padding-left: 20px;
+    height: calc(85% - 45px);
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .column-3 {
+    font-size: 16px;
+    width: 30%;
+    margin-right: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255);
+    overflow-y: auto;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  
+  /* Ensure padding at top and bottom of scrollable area */
+  .column-3::-webkit-scrollbar {
+    width: 8px; /* Adjust scrollbar width as needed */
+  }
+  
+  .column-3::-webkit-scrollbar-thumb {
+    background-color: rgb(150, 150, 150); /* Color of the scrollbar */
+    border-radius: 10px; /* Rounded corners */
+  }
+  
+  .column-3::-webkit-scrollbar-track {
+    background-color: rgb(230, 230, 230); /* Color of the track */
+    border-radius: 10px; /* Rounded corners */
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .settings-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgb(30, 30, 30);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  #journal-area {
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+  }
+  
+  .inverted-colors #journal-area {
+    color: white;
+  }
+  
+  .settings-label {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .settings-label input[type="checkbox"] {
+    margin-right: 10px; /* Adds space between the checkbox and the text */
+  }
+  
+  .task-checkbox {
+    margin-right: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgb(30, 30, 30);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  .task-checkbox:checked {
+    background-color: rgb(30, 30, 30);
+  }
+  
+  .task-title {
+    margin: 0;
+  }
+  
+  .task-card {
+    background-color: rgb(230, 230, 230);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  #timer-card {
+    background-color: rgb(30, 30, 30);
+    border-radius: 10px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #gptResponse {
+    color: white;
+    font-size: 50px; 
+    margin: 0; 
+    text-align: center;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  #submitButton {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid black;
+  }
+  
+  #start-recog-button {
+    color: black;
+    margin-left: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color: white;
+  }
+  
+  .inverted-colors #start-recog-button {
+    color: white;
+    border: 1px solid rgb(30, 30, 30);
+    background-color: rgb(30, 30, 30);
+  }
+  
+  .inverted-colors #start-recog-button:hover {
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+  }
+  
+  #submitButton:hover, #start-recog-button:hover {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    cursor: pointer;
+    border: 1px solid rgb(30, 30, 30);
+  }
+  
+  #start-recog-button:hover svg {
+    fill: white;
+  }
+  
+  .inverted-colors #start-recog-button svg {
+    fill: white;
+  }
+  
+  .inverted-colors #start-recog-button:hover svg {
+    fill: black;
+  }
+  
+  #start-journal-speech-button {
+    color: black;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color: white;
+  }
+  #saveJournalButton {
+    margin-left: 10px;
+    border: 1px solid black;
+    background-color: white;
+  }
+  #saveJournalButton:hover {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    border: 1px solid transparent;
+  }
+  
+  
+  #start-journal-speech-button:hover {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  #start-journal-speech-button:hover svg {
+    fill: white;
+  }
+  
+  #todoInput {
+    padding: 10px;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    border-radius: 10px;
+    background-color: rgb(30, 30, 30);
+    border: none;
+    resize: none;
+    width: 90%;
+    height: 20%;
+    box-sizing: border-box;
+  }
+  #journal-input {
+    padding: 10px;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    border-radius: 10px;
+    background-color: rgb(30, 30, 30);
+    border: none;
+    resize: none;
+    width: 90%;
+    min-height: 30%;
+    box-sizing: border-box;
+  }
+  .journal-entry {
+    border: 1px solid #ccc;
+    background-color: rgb(230, 230, 230);
+    color: black;
+    padding: 20px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+  }
+  
+  .journal-entry h3, .journal-entry small, .journal-entry p {
+    margin: 0;
+  }
+  
+  .journal-entry p {
+    display: none;
+    margin-top: 15px;
+  }
+  
+  .journal-entry.expanded p {
+    display: block;
+  }
+  .journal-entry.expanded small {
+    display: none;
+  }
+  
+  .journal-entry.expanded {
+    background-color: rgb(30, 30, 30);
+    color: white;
+  }
+  
+  .chat-form {
+    display: flex;
+    align-items: center;
+  }
+  .chat-form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px; /* Adjust height as needed */
+    padding: 0 10px; /* Adjust padding as needed */
+    border-radius: 10px;
+  }
