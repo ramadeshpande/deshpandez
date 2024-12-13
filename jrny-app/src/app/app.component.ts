@@ -1,12 +1,15 @@
+import { animate } from '@angular/animations';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+// @ts-ignore
+import Typewriter from 't-writer.js';
 
 @Component({
   standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [FormsModule]
+  imports: [FormsModule],
 })
 export class AppComponent implements OnInit {
   title = 'jrny-app';
@@ -14,14 +17,41 @@ export class AppComponent implements OnInit {
   inputArea = ''; // Store user input
   tasks: any[] = []; // In-memory task storage
   isDarkMode: boolean = false;
-  apiKey = "AIzaSyDR5V2AJ7ebK_cF-dWhlVWI2tNsludjOYQ";; // Replace with your actual API key
+  apiKey = "AIzaSyBDqNepYPVmQiuPVXRbQxz3rwF6C0z_rF8";; // Replace with your actual API key
   apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${this.apiKey}`;
-
+  
   ngOnInit(): void {
     console.log('AppComponent initialized');
     this.updateGreeting('friend');
+    const target = document.querySelector('.tw')
+    const target2 = document.querySelector('.tw2')
+    const options = {
+      loop: true,
+      typeSpeed: 90,
+      deleteSpeed: 90,
+      showcursor: false
+    }
+    const options2 = {
+      loop: false,
+      typeSpeed: 90,
+      deleteSpeed: 90
+    }
+    const writer = new Typewriter(target, options)
+    const writer2 = new Typewriter(target2, options2)
+    writer.start();
+    writer.removeCursor();
+    writer.type('hello, friend :)\n');
+    writer.rest(10000);
+    writer.clear();
+    writer2.start();
+    writer2.removeCursor();
+    writer2.rest(2000)
+    writer2.type('how can i help you today?');
+    
   }
+  
 
+  
   // Function to update the greeting text
   updateGreeting(name: string) {
     const greetingText1 = `hello, ${name}!`.toLowerCase();
