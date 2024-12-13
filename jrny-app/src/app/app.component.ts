@@ -1,5 +1,4 @@
-import { animate } from '@angular/animations';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 // @ts-ignore
 import Typewriter from 't-writer.js';
