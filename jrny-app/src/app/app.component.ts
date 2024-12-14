@@ -12,6 +12,7 @@ import Typewriter from 't-writer.js';
 })
 export class AppComponent implements OnInit {
   title = 'jrny-app';
+  gptResponse = ''; // Store API response
   todoInput = ''; // Store user input
   inputArea = ''; // Store user input
   tasks: any[] = []; // In-memory task storage
@@ -21,7 +22,6 @@ export class AppComponent implements OnInit {
   
   ngOnInit(): void {
     console.log('AppComponent initialized');
-    this.updateGreeting('friend');
     const target = document.querySelector('.tw')
     const target2 = document.querySelector('.tw2')
     const options = {
@@ -47,15 +47,6 @@ export class AppComponent implements OnInit {
     writer2.rest(2000)
     writer2.type('how can i help you today?');
     
-  }
-  
-
-  
-  // Function to update the greeting text
-  updateGreeting(name: string) {
-    const greetingText1 = `hello, ${name}!`.toLowerCase();
-    const greetingText2 = "it's good to see you again.";
-    console.log(greetingText1, greetingText2);
   }
 
   // Function to handle chat submission
@@ -109,56 +100,13 @@ export class AppComponent implements OnInit {
   }
 
   classifyInput(inputArea: string) {
-    const responseContentDiv = document.getElementById('gptResponse');
-
-    if (responseContentDiv) {
-      responseContentDiv.innerHTML = "Processing...";
-    }
+    this.gptResponse = "Processing...";
 
     if (inputArea.includes("task")) {
-      this.addTask(inputArea);
     } else if (inputArea.includes("timer")) {
       this.setTimer(5); // Example timer for now
     } else if (inputArea.includes("dark mode")) {
       this.toggleDarkMode();
-    }
-  }
-
-  addTask(taskDescription: string) {
-    console.log("Adding task:", taskDescription);
-
-    // Add task to in-memory array for now
-    this.tasks.push({ task: taskDescription, checked: false });
-
-    // Render tasks on the screen
-    this.renderTasks();
-  }
-
-  renderTasks() {
-    const contentDiv = document.getElementById("gptTaskContent");
-
-    if (contentDiv) {
-      contentDiv.innerHTML = ''; // Clear previous content
-
-      this.tasks.forEach(taskItem => {
-        const taskDiv = document.createElement("div");
-        taskDiv.classList.add("task-card");
-
-        const checkboxElmnts = document.createElement("input");
-        checkboxElmnts.type = "checkbox";
-        checkboxElmnts.checked = taskItem.checked;
-
-        checkboxElmnts.addEventListener('change', () => taskItem.checked = checkboxElmnts.checked);
-
-        taskDiv.appendChild(checkboxElmnts);
-
-        const titleElmnt = document.createElement("p");
-        titleElmnt.textContent = taskItem.task;
-
-        taskDiv.appendChild(titleElmnt);
-
-        contentDiv.appendChild(taskDiv);
-      });
     }
   }
 
