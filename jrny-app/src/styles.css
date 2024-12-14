@@ -19,8 +19,8 @@ body, html {
   }
   
   .inverted-colors .top-section {
-    background-color: black; /* Custom background color for column-2 */
-    color: white; /* Custom text color for column-2 */
+    background-color: black;
+    color: white; 
   }
   
   .inverted-colors .bottom-section {
@@ -65,6 +65,7 @@ body, html {
     font-size: x-large;
     font-weight: bold;
   }
+
   .inverted-colors #submitButton {
     background-color: rgb(30, 30, 30);
     color: white;
@@ -147,9 +148,11 @@ body, html {
     padding-left: 20px;
     height: calc(15% - 10px);
     background-color: rgb(255, 255, 255);
+    color: black;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  
   
   .bottom-section {
     margin-top: 15px;
