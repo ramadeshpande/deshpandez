@@ -103,37 +103,12 @@ export class AppComponent implements OnInit {
     this.gptResponse = "Processing...";
 
     if (inputArea.includes("task")) {
-    } else if (inputArea.includes("timer")) {
-      this.setTimer(5); // Example timer for now
+      
     } else if (inputArea.includes("dark mode")) {
       this.toggleDarkMode();
     }
   }
 
-  setTimer(timerMins: number) {
-    console.log(`Setting a ${timerMins} min timer`);
-
-    let timeInSeconds = timerMins * 60;
-    const countdownEl = document.getElementById('gptResponse');
-
-    let countdownInterval = setInterval(() => {
-      const minutes = Math.floor(timeInSeconds / 60);
-      let seconds = timeInSeconds % 60;
-      seconds = seconds < 10 ? Number('0' + seconds) : seconds;
-
-      if (countdownEl) {
-        countdownEl.innerHTML = `${minutes}:${seconds}`;
-      }
-
-      if (timeInSeconds <= 0) {
-        clearInterval(countdownInterval);
-        if (countdownEl) countdownEl.innerHTML = "Time's up!";
-        this.playBeepSound();
-      } else {
-        timeInSeconds--;
-      }
-    }, 1000);
-  }
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -141,19 +116,6 @@ export class AppComponent implements OnInit {
     } else {
       document.body.classList.remove("inverted-colors");
     }
-  }
-
-  playBeepSound() {
-    const audioContext = new AudioContext();
-    const oscillator = audioContext.createOscillator();
-
-    oscillator.connect(audioContext.destination);
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime); // Frequency in Hz
-
-    oscillator.start();
-
-    setTimeout(() => oscillator.stop(), 1000); // Stop after one second
   }
 
 }
