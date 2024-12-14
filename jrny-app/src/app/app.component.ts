@@ -106,6 +106,7 @@ export class AppComponent implements OnInit {
       this.gptResponse = "dark mode";
     } else if (inputArea.includes("dark mode")) {
       this.toggleDarkMode();
+      this.gptResponse = "dark mode";
     }
   }
 
