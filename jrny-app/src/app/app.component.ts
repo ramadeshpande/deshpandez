@@ -16,6 +16,8 @@ export class AppComponent implements OnInit {
   constructor(private er: ElementRef, private location: Location) {}
 
   title = 'jrny-app';
+  suggestion: string = ''; // Current autocomplete suggestion
+  suggestionsList: string[] = ['set a timer', 'give me a journal prompt', 'add tasks', 'remove tasks', 'switch to dark mode'];
   gptResponse = ''; // Store API response
   todoInput = ''; // Store user input
   inputArea = ''; // Store user input
@@ -67,6 +69,31 @@ export class AppComponent implements OnInit {
     this.initializeTypewriter();
   }
 
+  onInputChange() {
+    if (this.inputArea.trim() === '') {
+      this.suggestion = ''; // Clear suggestion if input is empty
+      return;
+    }
+
+    // Find the first suggestion that starts with the current input
+    const match = this.suggestionsList.find((s) =>
+      s.toLowerCase().startsWith(this.inputArea.toLowerCase())
+    );
+
+    // Set the remaining part of the matched suggestion as `suggestion`
+    this.suggestion = match ? match.slice(this.inputArea.length) : '';
+    console.log("Suggestion:", this.suggestion);
+  }
+
+  // Handle Tab key to accept the suggestion
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Tab' && this.suggestion) {
+      event.preventDefault(); // Prevent default Tab behavior
+      this.inputArea += this.suggestion; // Append the suggestion to the input
+      console.log("Suggestion accepted:", this.inputArea);
+      this.suggestion = ''; // Clear the suggestion after accepting it
+    }
+  }
   // Function to handle chat submission
   async submitChat(event: Event) {
     event.preventDefault();
