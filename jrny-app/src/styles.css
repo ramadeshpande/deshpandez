@@ -113,7 +113,7 @@ body, html {
   .column-1 {
     color: rgb(255, 255, 255);
     width: 8%;
-    margin-left: 15px;
+    margin-left: 8px;
     position: relative;
   }
   
@@ -138,8 +138,8 @@ body, html {
   .column-2 {
     width: 62%;
     padding: 0px;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 8px;
+    margin-right: 8px;
     overflow-y: hidden;
   }
   
@@ -155,10 +155,10 @@ body, html {
   
   
   .bottom-section {
-    margin-top: 15px;
+    margin-top: 8px;
     padding: 10px;
     padding-left: 20px;
-    height: calc(85% - 45px);
+    height: calc(85% - 38px);
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -167,7 +167,7 @@ body, html {
   .column-3 {
     font-size: 16px;
     width: 30%;
-    margin-right: 15px;
+    margin-right: 8px;
     padding-left: 20px;
     padding-right: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
