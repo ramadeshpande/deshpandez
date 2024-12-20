@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
   apiKey = "AIzaSyBDqNepYPVmQiuPVXRbQxz3rwF6C0z_rF8"; // Replace with your actual API key
   apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${this.apiKey}`;
   target: any;
+  typewriteChangeResponseBox: any;
   writer: any;
 
   // Default options for typewriter in light mode
@@ -67,7 +68,7 @@ export class AppComponent implements OnInit {
 
     // Initialize Typewriter with appropriate settings based on dark mode
     this.target = document.querySelector('.tw');
-    this.initializeTypewriter();
+    this.initializeTypewriter(this.target, this.writer, "hello");
   }
 
   onInputChange() {
@@ -145,13 +146,17 @@ export class AppComponent implements OnInit {
     } else if (inputArea.includes("light mode")) {
       this.toggleDarkMode();
       this.changeResponse = "light mode";
+    } else if (inputArea.includes("viv")) {
+      this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
+      this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "viv");
+      this.changeResponse = "hello";
     }
   }
 
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('isDarkMode', String(this.isDarkMode));
-    this.initializeTypewriter(); // Reinitialize typewriter with new color
+    this.initializeTypewriter(this.target, this.writer, "hello"); // Reinitialize typewriter with new color
     // Apply or remove dark mode class dynamically
     if (this.isDarkMode) {
       document.body.classList.add("inverted-colors");
@@ -160,33 +165,69 @@ export class AppComponent implements OnInit {
     }
   }
 
-  initializeTypewriter() {
+  initializeTypewriter(location: any, typer: any, what: string) {
     // If the target exists, clear it before initializing the new Typewriter instance
-    if (this.target) {
+    if (location) {
       // Clear the target element content
-      this.target.innerHTML = '';
+      location.innerHTML = '';
 
       // Create a new Typewriter instance with the appropriate options based on dark mode
-      this.writer = new Typewriter(this.target, this.isDarkMode ? this.darkoptions : this.options);
+      typer= new Typewriter(location, this.isDarkMode ? this.darkoptions : this.options);
 
       // Start the Typewriter with the updated configuration
-      this.writer.type('hello, there')
-        .rest(500)
-        .remove(5)
-        .type('friend')
-        .rest(900)
-        .clear()
-        .rest(500)
-        .clear()
-        .type('hope you are well')
-        .rest(500)
-        .remove(4)
-        .rest(500)
-        .type('absolutely fantastic.')
-        .removeCursor()
-        .rest(5000)
-        .clear()
-        .start();
+      if (what == "hello") {
+        typer.type('hello, there')
+          .rest(500)
+          .remove(5)
+          .type('friend')
+          .rest(900)
+          .clear()
+          .rest(500)
+          .clear()
+          .type('hope you are well')
+          .rest(500)
+          .remove(4)
+          .rest(500)
+          .type('absolutely fantastic.')
+          .removeCursor()
+          .rest(5000)
+          .clear()
+          .start();
+      } else if (what == "viv") {
+        typer.type('hi, vivek')
+          .rest(500)
+          .remove(5)
+          .type('my love')
+          .rest(900)
+          .clear()
+          .rest(500)
+          .clear()
+          .type('i miss you...')
+          .rest(500)
+          .remove(3)
+          .type(', and i love you SO damn much.')
+          .rest(500)
+          .clear()
+          .type('i\'m beyond lucky to have you')
+          .rest(500)
+          .remove(8)
+          .type('be yours')
+          .rest(500)
+          .clear()
+          .type('since you won\'t be up til midnight...')
+          .rest(500)
+          .clear()
+          .type('happy anniversary')
+          .rest(500)
+          .clear()
+          .type('this was the happiest year of my life')
+          .rest(500)
+          .clear()
+          .removeCursor()
+          .rest(5000)
+          .clear()
+          .start();  
+      }
     }
   }
 }
