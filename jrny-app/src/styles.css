@@ -268,9 +268,9 @@ body, html {
     justify-content: center;
   }
   
-  #gptResponse {
+  #changeResponse {
     color: white;
-    font-size: 50px; 
+    font-size: 20px; 
     margin: 0; 
     text-align: center;
   }
