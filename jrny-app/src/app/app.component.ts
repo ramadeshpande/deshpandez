@@ -1,10 +1,8 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
-
 // @ts-ignore
 import Typewriter from 't-writer.js';
-import { time } from 'node:console';
 
 @Component({
   standalone: true,
@@ -41,10 +39,19 @@ export class AppComponent implements OnInit {
     cursorColor: 'black',
     typeColor: 'black',
   };
-
   // Options for typewriter in dark mode
   darkoptions = {
     loop: true,
+    typeSpeed: "random",
+    typeSpeedMin: 150,
+    typeSpeedMax: 90,
+    deleteSpeed: 90,
+    showcursor: true, // Show cursor
+    cursorColor: 'white',
+    typeColor: 'white',
+  };
+  dark_noloop_options = {
+    loop: false,
     typeSpeed: "random",
     typeSpeedMin: 150,
     typeSpeedMax: 90,
@@ -138,26 +145,28 @@ export class AppComponent implements OnInit {
   classifyInput(inputArea: string) {
     this.changeResponse = "Processing...";
 
-    if (inputArea.includes("task")) {
-      // Example: handle tasks
+    if (inputArea.includes("add task")) {
+      this.changeResponse = "task added"
     } else if (inputArea.includes("dark")) {
-      this.toggleDarkMode();
+      this.toggleDarkMode(true);
       this.changeResponse = "dark mode"
     } else if (inputArea.includes("light mode")) {
-      this.toggleDarkMode();
+      this.toggleDarkMode(false);
       this.changeResponse = "light mode";
-    } else if (inputArea.includes("viv")) {
-      this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
-      this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "viv");
-      this.changeResponse = "hello";
     }
+
+    if (this.changeResponse == "Processing...") {
+      this.changeResponse = "action not recognized";
+    }
+    this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
+    this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "change");
+    
   }
 
-  toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
+  toggleDarkMode(b: boolean) {
+    this.isDarkMode = b;
     localStorage.setItem('isDarkMode', String(this.isDarkMode));
     this.initializeTypewriter(this.target, this.writer, "hello"); // Reinitialize typewriter with new color
-    // Apply or remove dark mode class dynamically
     if (this.isDarkMode) {
       document.body.classList.add("inverted-colors");
     } else {
@@ -171,11 +180,9 @@ export class AppComponent implements OnInit {
       // Clear the target element content
       location.innerHTML = '';
 
-      // Create a new Typewriter instance with the appropriate options based on dark mode
-      typer= new Typewriter(location, this.isDarkMode ? this.darkoptions : this.options);
-
       // Start the Typewriter with the updated configuration
       if (what == "hello") {
+        typer= new Typewriter(location, this.isDarkMode ? this.darkoptions : this.options);
         typer.type('hello, there')
           .rest(500)
           .remove(5)
@@ -193,38 +200,11 @@ export class AppComponent implements OnInit {
           .rest(5000)
           .clear()
           .start();
-      } else if (what == "viv") {
-        typer.type('hi, vivek')
-          .rest(500)
-          .remove(5)
-          .type('my love')
-          .rest(900)
-          .clear()
-          .rest(500)
-          .clear()
-          .type('i miss you...')
-          .rest(500)
-          .remove(3)
-          .type(', and i love you SO damn much.')
-          .rest(500)
-          .clear()
-          .type('i\'m beyond lucky to have you')
-          .rest(500)
-          .remove(8)
-          .type('be yours')
-          .rest(500)
-          .clear()
-          .type('since you won\'t be up til midnight...')
-          .rest(500)
-          .clear()
-          .type('happy anniversary')
-          .rest(500)
-          .clear()
-          .type('this was the happiest year of my life')
-          .rest(500)
-          .clear()
+      } else if (what == "change") {
+        typer = new Typewriter(location, this.dark_noloop_options);
+        typer.type(this.changeResponse)
           .removeCursor()
-          .rest(5000)
+          .rest(10000)
           .clear()
           .start();  
       }
