@@ -13,6 +13,7 @@ import Typewriter from 't-writer.js';
 })
 export class AppComponent implements OnInit {
   constructor(private er: ElementRef, private location: Location) {}
+  //testing
 
   title = 'jrny-app';
   suggestion: string = ''; // Current autocomplete suggestion
