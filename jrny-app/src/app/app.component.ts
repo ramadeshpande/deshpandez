@@ -1,15 +1,15 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Location } from '@angular/common';
+import { Location, CommonModule, NgIf } from '@angular/common';
+
 // @ts-ignore
 import Typewriter from 't-writer.js';
-
 @Component({
   standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule, NgIf],
 })
 export class AppComponent implements OnInit {
   constructor(private er: ElementRef, private location: Location) {}
@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
   suggestion: string = ''; // Current autocomplete suggestion
   suggestionsList: string[] = ['set a timer', 'give me a journal prompt', 'add tasks', 'remove tasks', 'switch to dark mode'];
   changeResponse = ''; // Store API response
-  todoInput = ''; // Store user input
   inputArea = ''; // Store user input
   tasks: any[] = []; // In-memory task storage
   isDarkMode: boolean = false; // Default value for dark mode
@@ -28,6 +27,8 @@ export class AppComponent implements OnInit {
   target: any;
   typewriteChangeResponseBox: any;
   writer: any;
+  form_on: boolean = true;
+
 
   // Default options for typewriter in light mode
   options = {
@@ -61,8 +62,26 @@ export class AppComponent implements OnInit {
     cursorColor: 'white',
     typeColor: 'white',
   };
+  topSection: HTMLElement | null = null;
+  settingsIcon: HTMLElement | null = null;
+  settingsMenu: HTMLElement | null = null;
+  darkModeToggle: HTMLElement | null = null;
+  journalArea: HTMLElement | null = null;
+  bottomSection: HTMLElement | null = null;
+  otherElementsBottom: NodeListOf<Element> = [] as unknown as NodeListOf<Element>;
+  journalContent: HTMLElement | null = null;
+  promptDiv: HTMLElement | null = null;
 
   ngOnInit(): void {
+    this.topSection = document.querySelector(".top-section");
+    this.settingsIcon = document.getElementById('settings-icon');
+    this.settingsMenu = document.getElementById('settings-menu');
+    this.darkModeToggle = document.getElementById('dark-mode-toggle');
+    this.journalArea = document.getElementById('journal-area');
+    this.bottomSection = document.querySelector(".bottom-section");
+    this.otherElementsBottom = this.bottomSection!.querySelectorAll("h3, small, br, form");
+    this.journalContent = document.getElementById('journal-content');
+    this.promptDiv = document.getElementById('prompt');
     // Retrieve and apply dark mode state from localStorage
     const darkModeState = localStorage.getItem('isDarkMode');
     this.isDarkMode = darkModeState === 'true';
@@ -77,6 +96,21 @@ export class AppComponent implements OnInit {
     // Initialize Typewriter with appropriate settings based on dark mode
     this.target = document.querySelector('.tw');
     this.initializeTypewriter(this.target, this.writer, "hello");
+  }
+  goHome() {
+    this.ngOnInit();
+    this.settingsMenu!.style.display = "none";
+    this.journalArea!.style.display = "none";
+    this.otherElementsBottom!.forEach(function(element) {
+        element.classList.remove("hidden");
+    });
+
+    document.getElementById('up-next-head')!.textContent = "up next";
+    document.getElementById('gptTaskContent')!.style.display = "block";
+    document.getElementById('journal-content')!.style.display = "none";
+    this.form_on = true;
+    document.getElementById('changeResponse')!.textContent = "";
+    this.inputArea = "";
   }
 
   onInputChange() {
@@ -148,20 +182,52 @@ export class AppComponent implements OnInit {
 
     if (inputArea.includes("add task")) {
       this.changeResponse = "task added"
-    } else if (inputArea.includes("dark")) {
+    } else if (inputArea.includes("dark mode")) {
       this.toggleDarkMode(true);
       this.changeResponse = "dark mode"
     } else if (inputArea.includes("light mode")) {
       this.toggleDarkMode(false);
       this.changeResponse = "light mode";
+    } else if (inputArea.includes("journal prompt")) {
+      this.generateJournal();
+      this.changeResponse = "journal prompt";
     }
-
     if (this.changeResponse == "Processing...") {
       this.changeResponse = "action not recognized";
     }
     this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
     this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "change");
     
+  }
+
+  async generateJournal() {
+    let ans = await this.fetchGem(`Can you generate one short journal prompt for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
+    ans = ans.toLowerCase();
+  
+    if (this.journalArea!.style.display === "none" || this.journalArea!.style.display === "") {
+        this.journalArea!.style.display = "block";
+        this.journalContent!.style.display = "block";
+        this.otherElementsBottom.forEach(function(element) {
+            element.classList.add("hidden");
+        });
+        this.form_on = false;
+        this.promptDiv!.textContent = ans;
+        document.getElementById('up-next-head')!.textContent = "past journals";
+        document.getElementById('gptTaskContent')!.style.display = "none";
+
+    } else {
+        this.form_on = true;
+        this.journalArea!.style.display = "none";
+        this.otherElementsBottom.forEach(function(element) {
+            element.classList.remove("hidden");
+        });
+        document.getElementById('up-next-head')!.textContent = "up next";
+        document.getElementById('gptTaskContent')!.style.display = "block";
+    }
+    
+
+    const journalInput = document.getElementById('journal-input');
+    const saveJournalButton = document.getElementById('saveJournalButton');
   }
 
   toggleDarkMode(b: boolean) {
@@ -212,3 +278,5 @@ export class AppComponent implements OnInit {
     }
   }
 }
+
+
