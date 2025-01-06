@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
   typewriteChangeResponseBox: any;
   writer: any;
   form_on: boolean = true;
+  journalSubmit: boolean = false;
 
 
   // Default options for typewriter in light mode
@@ -110,6 +111,7 @@ export class AppComponent implements OnInit {
     document.getElementById('gptTaskContent')!.style.display = "block";
     document.getElementById('journal-content')!.style.display = "none";
     this.form_on = true;
+    this.journalSubmit = false;
     document.getElementById('changeResponse')!.textContent = "";
     this.inputArea = "";
   }
@@ -142,9 +144,6 @@ export class AppComponent implements OnInit {
   // Function to handle chat submission
   async submitChat(event: Event) {
     event.preventDefault();
-    console.log("Submit button clicked");
-    console.log("User Input:", this.inputArea);
-
     // Optionally classify or process input here
     this.classifyInput(this.inputArea);
   }
@@ -198,6 +197,7 @@ export class AppComponent implements OnInit {
       this.changeResponse = "action not recognized";
     }
     this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
+    this.inputArea = ""; // Clear input area after processing
     this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "change");
     
   }
@@ -234,7 +234,11 @@ export class AppComponent implements OnInit {
         const responseBody = await response.text();
         this.displayJournals(await this.retrieveJournals(username));
         console.log('Successfully inserted data:', responseBody);
+
+        this.journalInput = ""; // Clear the journal input after saving
+        this.journalSubmit = true;
     } catch (error) {
+        this.journalSubmit = false;
         console.error('Error calling Azure function:', error);
     }
   }
@@ -318,9 +322,6 @@ export class AppComponent implements OnInit {
         document.getElementById('up-next-head')!.textContent = "up next";
         document.getElementById('gptTaskContent')!.style.display = "block";
     }
-
-    const journalInput = document.getElementById('journal-input');
-    const saveJournalButton = document.getElementById('saveJournalButton');
   }
 
   toggleDarkMode(b: boolean) {
