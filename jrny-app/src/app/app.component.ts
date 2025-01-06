@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   suggestionsList: string[] = ['set a timer', 'give me a journal prompt', 'add tasks', 'remove tasks', 'switch to dark mode'];
   changeResponse = ''; // Store API response
   inputArea = ''; // Store user input
+  journalInput = ''; // Store journal input
   tasks: any[] = []; // In-memory task storage
   isDarkMode: boolean = false; // Default value for dark mode
   apiKey = "AIzaSyBDqNepYPVmQiuPVXRbQxz3rwF6C0z_rF8"; // Replace with your actual API key
@@ -177,7 +178,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  classifyInput(inputArea: string) {
+  async classifyInput(inputArea: string) {
     this.changeResponse = "Processing...";
 
     if (inputArea.includes("add task")) {
@@ -190,6 +191,7 @@ export class AppComponent implements OnInit {
       this.changeResponse = "light mode";
     } else if (inputArea.includes("journal prompt")) {
       this.generateJournal();
+      this.displayJournals(await this.retrieveJournals("rama"));
       this.changeResponse = "journal prompt";
     }
     if (this.changeResponse == "Processing...") {
@@ -200,8 +202,100 @@ export class AppComponent implements OnInit {
     
   }
 
+  async saveJournal() {
+    let username = "rama"; // Replace with dynamic username if needed
+    let thePrompt = this.promptDiv?.textContent; // Replace with dynamic prompt if needed
+
+    const azureFunctionUrl = "https://jrny-googlecal.azurewebsites.net/api/one_post";
+
+    try {
+        // Prepare the data payload
+        let payload: any = {
+            username: username,
+            prompt: thePrompt,
+            response: this.journalInput
+        };
+
+        // Make the POST request to the Azure Function
+        const response = await fetch(azureFunctionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload), // Convert payload to JSON
+        });
+
+        // Handle the response
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Failed to insert data: ${errorMessage}`);
+        }
+
+        const responseBody = await response.text();
+        this.displayJournals(await this.retrieveJournals(username));
+        console.log('Successfully inserted data:', responseBody);
+    } catch (error) {
+        console.error('Error calling Azure function:', error);
+    }
+  }
+  async retrieveJournals(username: string) {
+    const azureFunctionUrl = `https://jrny-googlecal.azurewebsites.net/api/get_journals?username=${encodeURIComponent(username)}`;
+
+    try {
+        // Make the GET request to the Azure Function
+        const response = await fetch(azureFunctionUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // Handle the response
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Failed to retrieve journals: ${errorMessage}`);
+        }
+
+        // Parse the JSON response body
+        const journals = await response.json();
+        console.log('Retrieved journals:', journals);
+
+        // Return the journals for further processing
+        return journals;
+
+    } catch (error) {
+        // Handle and log any errors
+        console.error('Error retrieving journals:', error);
+        return null; // Return null to indicate failure
+    }
+  }
+
+  displayJournals(entries : any[]) {
+    const journalContent = document.getElementById('journal-content');
+
+    // Clear previous entries
+    journalContent!.innerHTML = '';
+
+    // Process each journal entry
+    entries.reverse().forEach(entry => {
+        let entryDiv = document.createElement('div');
+        entryDiv.className = 'journal-entry';
+        entryDiv.innerHTML = `
+            <h3>${entry.prompt}</h3>
+            <small>${new Date(entry.timestamp).toLocaleString()}</small>
+            <small>click to read more</small>
+            <p>${entry.response || entry.body}</p>
+        `;
+        journalContent!.appendChild(entryDiv);
+
+        entryDiv.addEventListener('click', () => {
+            entryDiv.classList.toggle('expanded');
+        });
+    });
+
+  }
   async generateJournal() {
-    let ans = await this.fetchGem(`Can you generate one short journal prompt for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
+    let ans = await this.fetchGem(`Can you generate one short journal question for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
     ans = ans.toLowerCase();
   
     if (this.journalArea!.style.display === "none" || this.journalArea!.style.display === "") {
@@ -224,7 +318,6 @@ export class AppComponent implements OnInit {
         document.getElementById('up-next-head')!.textContent = "up next";
         document.getElementById('gptTaskContent')!.style.display = "block";
     }
-    
 
     const journalInput = document.getElementById('journal-input');
     const saveJournalButton = document.getElementById('saveJournalButton');
