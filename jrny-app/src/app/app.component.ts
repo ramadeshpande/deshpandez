@@ -74,6 +74,12 @@ export class AppComponent implements OnInit {
   journalContent: HTMLElement | null = null;
   promptDiv: HTMLElement | null = null;
 
+  isLoggedIn = false; // Track login status
+  username = ''; // Store username
+  password = ''; // Store password
+  errorMessage = ''; // Display error messages if login fails
+
+
   ngOnInit(): void {
     this.topSection = document.querySelector(".top-section");
     this.settingsIcon = document.getElementById('settings-icon');
@@ -94,11 +100,54 @@ export class AppComponent implements OnInit {
     } else {
       document.body.classList.remove("inverted-colors");
     }
+    const token = localStorage.getItem('jwtToken');
+    //clear jwt from localstorage
+    localStorage.removeItem('jwtToken');
+    if (token) {
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+      this.grabUsername(); // Clear the screen and proceed to the app
+    }
+
 
     // Initialize Typewriter with appropriate settings based on dark mode
     this.target = document.querySelector('.tw');
     this.initializeTypewriter(this.target, this.writer, "hello");
   }
+  async login() {
+    try {
+      const response = await fetch("https://jrny-googlecal.azurewebsites.net/api/authenticate", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: this.username, password: this.password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid username or password.');
+      }
+
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('jwtToken', data.token); // Store JWT token in localStorage
+        this.isLoggedIn = true;
+        this.goHome(); // Clear the screen and proceed to the app
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      this.errorMessage = 'Invalid username or password. Please try again.';
+    }
+  }
+
+  logout(): void {
+    // Clear JWT token and reset login status
+    localStorage.removeItem('jwtToken');
+    this.isLoggedIn = false;
+    this.username = '';
+    this.password = '';
+    this.errorMessage = '';
+  }
+
   goHome() {
     this.ngOnInit();
     this.settingsMenu!.style.display = "none";
@@ -296,6 +345,17 @@ export class AppComponent implements OnInit {
             entryDiv.classList.toggle('expanded');
         });
     });
+
+  }
+  grabUsername() {
+    this.form_on = false;
+    this.journalArea!.style.display = "none";
+        this.otherElementsBottom.forEach(function(element) {
+            element.classList.add("hidden");
+        });
+      document.getElementById('up-next-head')!.textContent = "up next";
+      document.getElementById('gptTaskContent')!.style.display = "none";
+      document.getElementById('journal-content')!.style.display = "none";
 
   }
   async generateJournal() {

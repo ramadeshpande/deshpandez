@@ -27,6 +27,20 @@
               <input type="checkbox" class="task-checkbox" id="dark-mode-toggle"> dark mode
             </label>
           </div>
+          <div *ngIf="!isLoggedIn" class="login-container">
+            <h2>Login</h2>
+            <form (submit)="login(); $event.preventDefault()">
+              <label for="username">Username:</label>
+              <input type="text" id="username" [(ngModel)]="username" name="username" required />
+              
+              <label for="password">Password:</label>
+              <input type="password" id="password" [(ngModel)]="password" name="password" required />
+              
+              <button type="submit">Login</button>
+            </form>
+            
+            <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+          </div>
           <div id="journal-area" style="display: none;">
             <p *ngIf="!journalSubmit" style="font-size: 18px; font-weight: bold;">journal</p>
             <p *ngIf="journalSubmit" style="font-size: 18px; font-weight: bold;">journal complete!</p>
