@@ -249,15 +249,23 @@ export class AppComponent implements OnInit {
     console.log("Suggestion:", this.suggestion);
   }
 
-  // Handle Tab key to accept the suggestion
+
   onKeyDown(event: KeyboardEvent) {
+    // Handle Tab key for suggestions
     if (event.key === 'Tab' && this.suggestion) {
       event.preventDefault(); // Prevent default Tab behavior
       this.inputArea += this.suggestion; // Append the suggestion to the input
-      console.log("Suggestion accepted:", this.inputArea);
       this.suggestion = ''; // Clear the suggestion after accepting it
+      return;
+    }
+  
+    // Handle Enter key for form submission
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent newline in textarea
+      this.submitChat(event); // Call submitChat function
     }
   }
+
   // Function to handle chat submission
   async submitChat(event: Event) {
     event.preventDefault();
