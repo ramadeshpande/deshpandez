@@ -35,11 +35,11 @@
             </a>
             <form (ngSubmit)="isSignUp ? signUp() : login()" class="chat-form" 
                   style="display: flex; flex-direction: column; margin-top: 3%; align-items: baseline;">
-              <label for="username">Username:</label>
+              <label for="username">username:</label>
               <input type="text" id="username" [(ngModel)]="username" name="username" required 
                      style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;"/>
               
-              <label for="password">Password:</label>
+              <label for="password">password:</label>
               <input type="password" id="password" [(ngModel)]="password" name="password" required 
                      style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;" />
           
@@ -47,7 +47,7 @@
                       style="margin-top: 10px; padding: 10px; font-size: 16px; border-radius: 10px; display: flex;">submit</button>
             </form>
             
-            <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+            <p *ngIf="errorMessage" class="error" style="color: red">{{ errorMessage }}</p>
           </div>
           
           <div id="journal-area" *ngIf="journal_on">
@@ -102,6 +102,7 @@
           <small>click to read more</small>
           <p *ngIf="entry.expanded">{{ entry.response }}</p>
         </div>
+        <p *ngIf="journalList.length == 0">no journal entries yet.</p>
       </div>
       <div id="gptTaskContent"></div>
     </div>

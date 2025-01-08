@@ -114,17 +114,20 @@ export class AppComponent implements OnInit {
         element.classList.remove("hidden");
       });
       this.form_on = true;
-      if (this.journalList.length == 0) {
-        this.journalList = await this.retrieveJournals(localStorage.getItem('username') || "");
-        this.journalList.reverse();
+      try {
+        const journals = await this.retrieveJournals(localStorage.getItem('username') || "");
+        this.journalList = journals ? journals.reverse() : []; // Default to empty array
+      } catch (error) {
+        console.error('Failed to retrieve journals:', error);
+        this.journalList = []; // Handle failure gracefully
       }
-      
     } else {
       this.isLoggedIn = false;
       this.otherElementsBottom!.forEach(function(element) {
         element.classList.add("hidden");
       });
       this.form_on = false;
+      this.journalList = []; 
     }
 
     // Initialize Typewriter with appropriate settings based on dark mode
@@ -137,7 +140,6 @@ export class AppComponent implements OnInit {
   } 
 
   async login() {
-    document.getElementById('loginlabel')!.innerText = "log in";
     try {
       const response = await fetch("https://jrny-googlecal.azurewebsites.net/api/authenticate", {
         method: 'POST',
@@ -159,13 +161,30 @@ export class AppComponent implements OnInit {
         this.journalList.reverse();
       }
     } catch (error) {
-      console.error('Login failed:', error);
-      this.errorMessage = 'Invalid username or password. Please try again.';
+      this.errorMessage = 'invalid username or password. please try again.';
     }
   }
 
-  signUp() {
-    
+  async signUp() {
+    try {
+      const response = await fetch("https://jrny-googlecal.azurewebsites.net/api/create_user", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: this.username, password: this.password }),
+      });
+      if (response.status == 409) {
+        this.errorMessage = 'username is taken. please sign up with a different username.';
+      }
+      if (response.ok) {
+        this.toggleSignUp();
+        this.username = '';
+        this.password = '';
+        this.errorMessage = 'account created! please type in your credentials again to log in :)';
+      } 
+      
+    } catch (error) {
+      this.errorMessage = "" + error;
+    }
   }
 
   logout(): void {
@@ -337,37 +356,19 @@ export class AppComponent implements OnInit {
         console.error('Error calling Azure function:', error);
     }
   }
-  async retrieveJournals(username: string) {
-
-    console.log('Retrieving journals for user:', username);
+  async retrieveJournals(username: string): Promise<any[]> {
     const azureFunctionUrl = `https://jrny-googlecal.azurewebsites.net/api/get_journals?username=${username}`;
-
     try {
-        // Make the GET request to the Azure Function
-        const response = await fetch(azureFunctionUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        // Handle the response
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(`Failed to retrieve journals: ${errorMessage}`);
-        }
-
-        // Parse the JSON response body
-        const journals = await response.json();
-        console.log('Retrieved journals:', journals);
-
-        // Return the journals for further processing
-        return journals;
-
+      const response = await fetch(azureFunctionUrl, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Failed to retrieve journals: ${errorMessage}`);
+      }
+      const journals = await response.json();
+      return journals || []; // Return empty array if response is null
     } catch (error) {
-        // Handle and log any errors
-        console.error('Error retrieving journals:', error);
-        return null; // Return null to indicate failure
+      console.error('Error retrieving journals:', error);
+      return []; // Return empty array on error
     }
   }
 
@@ -395,6 +396,7 @@ export class AppComponent implements OnInit {
     this.form_on = false;
     this.journal_on = true;
     this.prompt = ans;
+    
     document.getElementById('up-next-head')!.textContent = "past journals";
     document.getElementById('gptTaskContent')!.style.display = "none";
   }
