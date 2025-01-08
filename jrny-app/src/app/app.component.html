@@ -44,10 +44,10 @@
             
             <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
           </div>
-          <div id="journal-area" style="display: none;">
+          <div id="journal-area" *ngIf="journal_on">
             <p *ngIf="!journalSubmit" style="font-size: 18px; font-weight: bold;">journal</p>
             <p *ngIf="journalSubmit" style="font-size: 18px; font-weight: bold;">journal complete!</p>
-            <p id="prompt" style="font-size: 16px; font-weight: 100;">prompt</p>
+            <p id="prompt" style="font-size: 16px; font-weight: 100;" [(ngModel)]="prompt">{{prompt}}</p>
             <textarea [(ngModel)]="journalInput" *ngIf="!journalSubmit" rows="20" cols="40" id="journal-input" placeholder="type your journal response here"></textarea>
             <br><br>
             <div class="chat-form">

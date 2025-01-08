@@ -30,9 +30,10 @@ export class AppComponent implements OnInit {
   typewriteChangeResponseBox: any;
   writer: any;
   form_on: boolean = true;
+  journal_on: boolean = false;
   journalSubmit: boolean = false;
   settings_on: boolean = false;
-
+  prompt = "";
   // Default options for typewriter in light mode
   options = {
     loop: true,
@@ -73,7 +74,6 @@ export class AppComponent implements OnInit {
   bottomSection: HTMLElement | null = null;
   otherElementsBottom: NodeListOf<Element> = [] as unknown as NodeListOf<Element>;
   journalContent: HTMLElement | null = null;
-  promptDiv: HTMLElement | null = null;
 
   isLoggedIn = false; // Track login status
   username = ''; // Store username
@@ -90,7 +90,6 @@ export class AppComponent implements OnInit {
     this.bottomSection = document.querySelector(".bottom-section");
     this.otherElementsBottom = this.bottomSection!.querySelectorAll("h3, small, br, form");
     this.journalContent = document.getElementById('journal-content');
-    this.promptDiv = document.getElementById('prompt');
     // Retrieve and apply dark mode state from localStorage
     const darkModeState = localStorage.getItem('isDarkMode');
     this.isDarkMode = darkModeState === 'true';
@@ -160,8 +159,6 @@ export class AppComponent implements OnInit {
   goHome() {
     if (this.isLoggedIn) {
       this.ngOnInit();
-      this.settingsMenu!.style.display = "none";
-      this.journalArea!.style.display = "none";
       this.otherElementsBottom!.forEach(function(element) {
           element.classList.remove("hidden");
       });
@@ -171,6 +168,7 @@ export class AppComponent implements OnInit {
       document.getElementById('journal-content')!.style.display = "none";
       this.form_on = true;
       this.settings_on = false;
+      this.journal_on = false;
       this.journalSubmit = false;
       document.getElementById('changeResponse')!.textContent = "";
       this.inputArea = "";
@@ -183,6 +181,7 @@ export class AppComponent implements OnInit {
       this.settings_on = !this.settings_on;
       if (this.settings_on) {
         this.form_on = false;
+        this.journal_on = false;
         this.otherElementsBottom.forEach(function(element) {
           element.classList.add("hidden");
         });
@@ -266,7 +265,7 @@ export class AppComponent implements OnInit {
       this.changeResponse = "light mode";
     } else if (inputArea.includes("journal prompt")) {
       this.generateJournal();
-      this.displayJournals(await this.retrieveJournals("rama"));
+      this.displayJournals(await this.retrieveJournals(this.username));
       this.changeResponse = "journal prompt";
     }
     if (this.changeResponse == "Processing...") {
@@ -279,8 +278,8 @@ export class AppComponent implements OnInit {
   }
 
   async saveJournal() {
-    let username = "rama"; // Replace with dynamic username if needed
-    let thePrompt = this.promptDiv?.textContent; // Replace with dynamic prompt if needed
+    let username = this.username; // Replace with dynamic username if needed
+    let thePrompt = this.prompt; // Replace with dynamic prompt if needed
 
     const azureFunctionUrl = "https://jrny-googlecal.azurewebsites.net/api/one_post";
 
@@ -388,27 +387,15 @@ export class AppComponent implements OnInit {
   async generateJournal() {
     let ans = await this.fetchGem(`Can you generate one short journal question for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
     ans = ans.toLowerCase();
-  
-    if (this.journalArea!.style.display === "none" || this.journalArea!.style.display === "") {
-        this.journalArea!.style.display = "block";
-        this.journalContent!.style.display = "block";
-        this.otherElementsBottom.forEach(function(element) {
-            element.classList.add("hidden");
-        });
-        this.form_on = false;
-        this.promptDiv!.textContent = ans;
-        document.getElementById('up-next-head')!.textContent = "past journals";
-        document.getElementById('gptTaskContent')!.style.display = "none";
-
-    } else {
-        this.form_on = true;
-        this.journalArea!.style.display = "none";
-        this.otherElementsBottom.forEach(function(element) {
-            element.classList.remove("hidden");
-        });
-        document.getElementById('up-next-head')!.textContent = "up next";
-        document.getElementById('gptTaskContent')!.style.display = "block";
-    }
+    this.journal_on = true;
+    this.otherElementsBottom.forEach(function(element) {
+        element.classList.add("hidden");
+    });
+    this.form_on = false;
+    this.journal_on = true;
+    this.prompt = ans;
+    document.getElementById('up-next-head')!.textContent = "past journals";
+    document.getElementById('gptTaskContent')!.style.display = "none";
   }
 
   toggleDarkMode(b: boolean) {
