@@ -113,6 +113,10 @@ export class AppComponent implements OnInit {
       
     } else {
       this.isLoggedIn = false;
+      this.otherElementsBottom!.forEach(function(element) {
+        element.classList.add("hidden");
+      });
+      this.form_on = false;
     }
 
     // Initialize Typewriter with appropriate settings based on dark mode
