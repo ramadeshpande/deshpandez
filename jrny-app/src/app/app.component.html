@@ -28,22 +28,28 @@
             </label>
           </div>
           <div *ngIf="!isLoggedIn" class="login-container">
-            <h3>log in</h3>
-            <form (submit)="login()" class="chat-form" style="display: flex; flex-direction: column; margin-top: auto; align-items:first baseline; ">
+            <h3 id="login-label">{{ isSignUp ? 'sign up' : 'log in' }}</h3>
+            <a style="text-decoration: underline; border-width: 0px; background-color: transparent; color: blueviolet; text-align: left; cursor: pointer;" 
+               (click)="toggleSignUp()">
+              {{ isSignUp ? 'already have an account? log in' : "don't have an account? create one" }}
+            </a>
+            <form (ngSubmit)="isSignUp ? signUp() : login()" class="chat-form" 
+                  style="display: flex; flex-direction: column; margin-top: 3%; align-items: baseline;">
               <label for="username">Username:</label>
               <input type="text" id="username" [(ngModel)]="username" name="username" required 
-                style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;"/>
+                     style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;"/>
               
               <label for="password">Password:</label>
               <input type="password" id="password" [(ngModel)]="password" name="password" required 
-                style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;" />
-  
+                     style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;" />
+          
               <button type="submit" 
-                style="margin-top: 10px; padding: 10px; font-size: 16px; border-radius: 10px; display: flex;">submit</button>
+                      style="margin-top: 10px; padding: 10px; font-size: 16px; border-radius: 10px; display: flex;">submit</button>
             </form>
             
             <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
           </div>
+          
           <div id="journal-area" *ngIf="journal_on">
             <p *ngIf="!journalSubmit" style="font-size: 18px; font-weight: bold;">journal</p>
             <p *ngIf="journalSubmit" style="font-size: 18px; font-weight: bold;">journal complete!</p>

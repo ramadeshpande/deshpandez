@@ -34,6 +34,9 @@ export class AppComponent implements OnInit {
   journal_on: boolean = false;
   journalSubmit: boolean = false;
   settings_on: boolean = false;
+
+  isSignUp = false;
+
   prompt = "";
   // Default options for typewriter in light mode
   options = {
@@ -128,7 +131,13 @@ export class AppComponent implements OnInit {
     this.target = document.querySelector('.tw');
     this.initializeTypewriter(this.target, this.writer, "hello");
   }
+
+  toggleSignUp() {
+    this.isSignUp = !this.isSignUp;
+  } 
+
   async login() {
+    document.getElementById('loginlabel')!.innerText = "log in";
     try {
       const response = await fetch("https://jrny-googlecal.azurewebsites.net/api/authenticate", {
         method: 'POST',
@@ -153,6 +162,10 @@ export class AppComponent implements OnInit {
       console.error('Login failed:', error);
       this.errorMessage = 'Invalid username or password. Please try again.';
     }
+  }
+
+  signUp() {
+    
   }
 
   logout(): void {
