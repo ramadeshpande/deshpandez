@@ -258,6 +258,7 @@ export class AppComponent implements OnInit {
       this.suggestion = ''; // Clear the suggestion after accepting it
       return;
     }
+    //new comment
   
     // Handle Enter key for form submission
     if (event.key === 'Enter' && !event.shiftKey) {
