@@ -158,32 +158,37 @@ export class AppComponent implements OnInit {
 
 
   goHome() {
-    this.ngOnInit();
-    this.settingsMenu!.style.display = "none";
-    this.journalArea!.style.display = "none";
-    this.otherElementsBottom!.forEach(function(element) {
-        element.classList.remove("hidden");
-    });
+    if (this.isLoggedIn) {
+      this.ngOnInit();
+      this.settingsMenu!.style.display = "none";
+      this.journalArea!.style.display = "none";
+      this.otherElementsBottom!.forEach(function(element) {
+          element.classList.remove("hidden");
+      });
 
-    document.getElementById('up-next-head')!.textContent = "up next";
-    document.getElementById('gptTaskContent')!.style.display = "block";
-    document.getElementById('journal-content')!.style.display = "none";
-    this.form_on = true;
-    this.settings_on = false;
-    this.journalSubmit = false;
-    document.getElementById('changeResponse')!.textContent = "";
-    this.inputArea = "";
+      document.getElementById('up-next-head')!.textContent = "up next";
+      document.getElementById('gptTaskContent')!.style.display = "block";
+      document.getElementById('journal-content')!.style.display = "none";
+      this.form_on = true;
+      this.settings_on = false;
+      this.journalSubmit = false;
+      document.getElementById('changeResponse')!.textContent = "";
+      this.inputArea = "";
+    } 
+    
   }
 
   showSettings() {
-    this.settings_on = !this.settings_on;
-    if (this.settings_on) {
-      this.form_on = false;
-      this.otherElementsBottom.forEach(function(element) {
-        element.classList.add("hidden");
-      });
-    } else {
-      this.goHome();
+    if (this.isLoggedIn) {
+      this.settings_on = !this.settings_on;
+      if (this.settings_on) {
+        this.form_on = false;
+        this.otherElementsBottom.forEach(function(element) {
+          element.classList.add("hidden");
+        });
+      } else {
+        this.goHome();
+      }
     }
   }
 
