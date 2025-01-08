@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   writer: any;
   form_on: boolean = true;
   journalSubmit: boolean = false;
-
+  settings_on: boolean = false;
 
   // Default options for typewriter in light mode
   options = {
@@ -147,6 +147,7 @@ export class AppComponent implements OnInit {
     this.errorMessage = '';
   }
 
+
   goHome() {
     this.ngOnInit();
     this.settingsMenu!.style.display = "none";
@@ -159,9 +160,22 @@ export class AppComponent implements OnInit {
     document.getElementById('gptTaskContent')!.style.display = "block";
     document.getElementById('journal-content')!.style.display = "none";
     this.form_on = true;
+    this.settings_on = false;
     this.journalSubmit = false;
     document.getElementById('changeResponse')!.textContent = "";
     this.inputArea = "";
+  }
+
+  showSettings() {
+    this.settings_on = !this.settings_on;
+    if (this.settings_on) {
+      this.form_on = false;
+      this.otherElementsBottom.forEach(function(element) {
+        element.classList.add("hidden");
+      });
+    } else {
+      this.goHome();
+    }
   }
 
   onInputChange() {
