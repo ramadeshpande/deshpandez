@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
   inputArea = ''; // Store user input
   journalInput = ''; // Store journal input
   tasks: any[] = []; // In-memory task storage
+  journalList: any[] = []; // In-memory journal storage
   isDarkMode: boolean = false; // Default value for dark mode
   apiKey = "AIzaSyBDqNepYPVmQiuPVXRbQxz3rwF6C0z_rF8"; // Replace with your actual API key
   apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${this.apiKey}`;
@@ -81,7 +82,7 @@ export class AppComponent implements OnInit {
   errorMessage = ''; // Display error messages if login fails
 
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.topSection = document.querySelector(".top-section");
     this.settingsIcon = document.getElementById('settings-icon');
     this.settingsMenu = document.getElementById('settings-menu');
@@ -103,12 +104,17 @@ export class AppComponent implements OnInit {
 
     const token = localStorage.getItem('jwtToken');
     //localStorage.removeItem('jwtToken'); // Clear JWT token for testing
+    
     if (token) {
       this.isLoggedIn = true;
       this.otherElementsBottom!.forEach(function(element) {
         element.classList.remove("hidden");
       });
       this.form_on = true;
+      if (this.journalList.length == 0) {
+        this.journalList = await this.retrieveJournals(localStorage.getItem('username') || "");
+        this.journalList.reverse();
+      }
       
     } else {
       this.isLoggedIn = false;
@@ -138,7 +144,10 @@ export class AppComponent implements OnInit {
       if (data.token) {
         localStorage.setItem('jwtToken', data.token); // Store JWT token in localStorage
         this.isLoggedIn = true;
+        localStorage.setItem('username', this.username);
         this.goHome(); // Clear the screen and proceed to the app
+        this.journalList = await this.retrieveJournals(localStorage.getItem('username') || "");
+        this.journalList.reverse();
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -151,6 +160,7 @@ export class AppComponent implements OnInit {
     localStorage.removeItem('jwtToken');
     this.isLoggedIn = false;
     this.username = '';
+    localStorage.removeItem('username');
     this.password = '';
     this.errorMessage = '';
   }
@@ -265,7 +275,6 @@ export class AppComponent implements OnInit {
       this.changeResponse = "light mode";
     } else if (inputArea.includes("journal prompt")) {
       this.generateJournal();
-      this.displayJournals(await this.retrieveJournals(this.username));
       this.changeResponse = "journal prompt";
     }
     if (this.changeResponse == "Processing...") {
@@ -278,16 +287,13 @@ export class AppComponent implements OnInit {
   }
 
   async saveJournal() {
-    let username = this.username; // Replace with dynamic username if needed
-    let thePrompt = this.prompt; // Replace with dynamic prompt if needed
-
     const azureFunctionUrl = "https://jrny-googlecal.azurewebsites.net/api/one_post";
-
+    this.username = localStorage.getItem('username') || "";
     try {
         // Prepare the data payload
         let payload: any = {
-            username: username,
-            prompt: thePrompt,
+            username: this.username,
+            prompt: this.prompt,
             response: this.journalInput
         };
 
@@ -307,8 +313,9 @@ export class AppComponent implements OnInit {
         }
 
         const responseBody = await response.text();
-        this.displayJournals(await this.retrieveJournals(username));
+        await this.retrieveJournals(this.username);
         console.log('Successfully inserted data:', responseBody);
+        this.journalList.unshift(payload); // Add to the beginning of the list
 
         this.journalInput = ""; // Clear the journal input after saving
         this.journalSubmit = true;
@@ -318,7 +325,9 @@ export class AppComponent implements OnInit {
     }
   }
   async retrieveJournals(username: string) {
-    const azureFunctionUrl = `https://jrny-googlecal.azurewebsites.net/api/get_journals?username=${encodeURIComponent(username)}`;
+
+    console.log('Retrieving journals for user:', username);
+    const azureFunctionUrl = `https://jrny-googlecal.azurewebsites.net/api/get_journals?username=${username}`;
 
     try {
         // Make the GET request to the Azure Function
@@ -349,30 +358,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  displayJournals(entries : any[]) {
-    const journalContent = document.getElementById('journal-content');
-
-    // Clear previous entries
-    journalContent!.innerHTML = '';
-
-    // Process each journal entry
-    entries.reverse().forEach(entry => {
-        let entryDiv = document.createElement('div');
-        entryDiv.className = 'journal-entry';
-        entryDiv.innerHTML = `
-            <h3>${entry.prompt}</h3>
-            <small>${new Date(entry.timestamp).toLocaleString()}</small>
-            <small>click to read more</small>
-            <p>${entry.response || entry.body}</p>
-        `;
-        journalContent!.appendChild(entryDiv);
-
-        entryDiv.addEventListener('click', () => {
-            entryDiv.classList.toggle('expanded');
-        });
-    });
-
+  toggleEntry(entry: any): void {
+    entry.expanded = !entry.expanded;
   }
+
   grabUsername() {
     this.form_on = false;
     this.journalArea!.style.display = "none";
@@ -387,7 +376,6 @@ export class AppComponent implements OnInit {
   async generateJournal() {
     let ans = await this.fetchGem(`Can you generate one short journal question for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
     ans = ans.toLowerCase();
-    this.journal_on = true;
     this.otherElementsBottom.forEach(function(element) {
         element.classList.add("hidden");
     });

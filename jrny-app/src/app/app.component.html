@@ -88,7 +88,15 @@
         <p [(ngModel)]="changeResponse" id="changeResponse" style="color: white;">{{changeResponse}}</p>
       </div>
       <h2 id="up-next-head" style="font-size: 18px;">up next</h2>
-      <div id="journal-content" style="display: none;"></div> 
+      <div id="journal-content" *ngIf="journal_on">
+        <div id="entryDiv" class="journal-entry" *ngFor="let entry of journalList" [class.expanded]="entry.expanded" (click)="toggleEntry(entry)">
+          <h3>{{ entry.prompt }}</h3>
+          <small>{{ entry.timestamp }}</small>
+          <br *ngIf="!entry.expanded">
+          <small>click to read more</small>
+          <p *ngIf="entry.expanded">{{ entry.response }}</p>
+        </div>
+      </div>
       <div id="gptTaskContent"></div>
     </div>
   </div>
