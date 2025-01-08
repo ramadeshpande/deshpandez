@@ -4,6 +4,7 @@ import { Location, CommonModule, NgIf } from '@angular/common';
 
 // @ts-ignore
 import Typewriter from 't-writer.js';
+import { timeStamp } from 'console';
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -100,15 +101,19 @@ export class AppComponent implements OnInit {
     } else {
       document.body.classList.remove("inverted-colors");
     }
-    const token = localStorage.getItem('jwtToken');
 
+    const token = localStorage.getItem('jwtToken');
+    //localStorage.removeItem('jwtToken'); // Clear JWT token for testing
     if (token) {
       this.isLoggedIn = true;
+      this.otherElementsBottom!.forEach(function(element) {
+        element.classList.remove("hidden");
+      });
+      this.form_on = true;
+      
     } else {
       this.isLoggedIn = false;
-      this.grabUsername(); // Clear the screen and proceed to the app
     }
-
 
     // Initialize Typewriter with appropriate settings based on dark mode
     this.target = document.querySelector('.tw');
