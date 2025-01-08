@@ -101,8 +101,7 @@ export class AppComponent implements OnInit {
       document.body.classList.remove("inverted-colors");
     }
     const token = localStorage.getItem('jwtToken');
-    //clear jwt from localstorage
-    localStorage.removeItem('jwtToken');
+
     if (token) {
       this.isLoggedIn = true;
     } else {

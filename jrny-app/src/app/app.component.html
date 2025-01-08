@@ -28,15 +28,18 @@
             </label>
           </div>
           <div *ngIf="!isLoggedIn" class="login-container">
-            <h2>Login</h2>
-            <form (submit)="login(); $event.preventDefault()">
+            <h3>log in</h3>
+            <form (submit)="login()" class="chat-form" style="display: flex; flex-direction: column; margin-top: auto; align-items:first baseline; ">
               <label for="username">Username:</label>
-              <input type="text" id="username" [(ngModel)]="username" name="username" required />
+              <input type="text" id="username" [(ngModel)]="username" name="username" required 
+                style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;"/>
               
               <label for="password">Password:</label>
-              <input type="password" id="password" [(ngModel)]="password" name="password" required />
-              
-              <button type="submit">Login</button>
+              <input type="password" id="password" [(ngModel)]="password" name="password" required 
+                style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;" />
+  
+              <button type="submit" 
+                style="margin-top: 10px; padding: 10px; font-size: 16px; border-radius: 10px; display: flex;">submit</button>
             </form>
             
             <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
