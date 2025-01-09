@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
 
   title = 'jrny-app';
   suggestion: string = ''; // Current autocomplete suggestion
-  suggestionsList: string[] = ['timer', 'journal prompt', 'add tasks', 'remove tasks', 'dark mode', 'light mode'];
+  suggestionsList: string[] = ['timer', 'journal prompt', 'add tasks', 'remove tasks', 'dark mode', 'light mode', 'ask gemini ']; // List of autocomplete suggestions
   changeResponse = ''; // Store API response
   inputArea = ''; // Store user input
   journalInput = ''; // Store journal input
@@ -29,11 +29,14 @@ export class AppComponent implements OnInit {
   apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${this.apiKey}`;
   target: any;
   typewriteChangeResponseBox: any;
+  typewriteAskGeminiBox: any;
   writer: any;
   form_on: boolean = true;
   journal_on: boolean = false;
   journalSubmit: boolean = false;
   settings_on: boolean = false;
+  gemini_on: boolean = false;
+  geminiSays = '';
 
   isSignUp = false;
 
@@ -72,6 +75,30 @@ export class AppComponent implements OnInit {
     cursorColor: 'white',
     typeColor: 'white',
   };
+  light_noloop_options = {
+    loop: false,
+    typeSpeed: "random",
+    typeSpeedMin: 150,
+    typeSpeedMax: 90,
+    deleteSpeed: 90,
+    showcursor: true, // Show cursor
+    cursorColor: 'black',
+    typeColor: 'black',
+  };
+  fast_light_noloop_options = {
+    loop: false,
+    typeSpeed: 30,
+    showcursor: true, // Show cursor
+    cursorColor: 'black',
+    typeColor: 'black',
+  }
+  fast_dark_noloop_options = {
+    loop: false,
+    typeSpeed: 30,
+    showcursor: true, // Show cursor
+    cursorColor: 'white',
+    typeColor: 'white',
+  }
   topSection: HTMLElement | null = null;
   settingsIcon: HTMLElement | null = null;
   settingsMenu: HTMLElement | null = null;
@@ -266,6 +293,7 @@ export class AppComponent implements OnInit {
       this.settings_on = false;
       this.journal_on = false;
       this.journalSubmit = false;
+      this.gemini_on = false;
       document.getElementById('changeResponse')!.textContent = "";
       this.inputArea = "";
       
@@ -287,6 +315,18 @@ export class AppComponent implements OnInit {
       } else {
         this.goHome();
       }
+    }
+  }
+
+  async askGeminiDirectly(query: string) {
+    if (this.isLoggedIn) {
+      this.gemini_on = true;
+      this.journal_on = false;
+      this.settings_on = false;
+      document.getElementById('up-next-head')!.textContent = "gemini response";
+      this.geminiSays = await this.fetchGem(query);
+      this.typewriteAskGeminiBox = document.querySelector('#askGemini');
+      this.initializeTypewriter(this.typewriteAskGeminiBox, this.writer, "gemini");
     }
   }
   onInputChange() {
@@ -377,19 +417,28 @@ export class AppComponent implements OnInit {
 
   async classifyInput(inputArea: string) {
     this.changeResponse = "Processing...";
-
-    if (inputArea.includes("add task")) {
-      this.changeResponse = "task added"
-    } else if (inputArea.includes("dark mode")) {
-      this.toggleDarkMode(true);
-      this.changeResponse = "dark mode"
-    } else if (inputArea.includes("light mode")) {
-      this.toggleDarkMode(false);
-      this.changeResponse = "light mode";
-    } else if (inputArea.includes("journal prompt")) {
-      this.generateJournal();
-      this.changeResponse = "journal prompt";
+    if (inputArea.includes("ask gemini")) {
+      const keyword = "ask gemini";
+      this.changeResponse = inputArea.substring(inputArea.indexOf(keyword) + keyword.length).trim();
+      this.askGeminiDirectly(this.changeResponse)
     }
+    else {
+      document.getElementById('up-next-head')!.textContent = "up next";
+      this.gemini_on = false;
+      if (inputArea.includes("add task")) {
+        this.changeResponse = "task added"
+      } else if (inputArea.includes("dark mode")) {
+        this.toggleDarkMode(true);
+        this.changeResponse = "dark mode"
+      } else if (inputArea.includes("light mode")) {
+        this.toggleDarkMode(false);
+        this.changeResponse = "light mode";
+      } else if (inputArea.includes("journal prompt")) {
+        this.generateJournal();
+        this.changeResponse = "journal prompt";
+      } 
+    }
+    
     if (this.changeResponse == "Processing...") {
       this.changeResponse = "action not recognized";
     }
@@ -521,6 +570,13 @@ export class AppComponent implements OnInit {
       } else if (what == "change") {
         typer = new Typewriter(location, this.dark_noloop_options);
         typer.type(this.changeResponse)
+          .removeCursor()
+          .rest(20000)
+          .clear()
+          .start();  
+      } else if (what == "gemini") {
+        typer = new Typewriter(location, this.isDarkMode ? this.fast_dark_noloop_options : this.fast_light_noloop_options);
+        typer.type(this.geminiSays)
           .removeCursor()
           .rest(10000)
           .clear()

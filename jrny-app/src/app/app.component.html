@@ -130,6 +130,7 @@
         <p *ngIf="journalList.length == 0">no journal entries yet.</p>
       </div>
       <div id="gptTaskContent"></div>
+      <div id="askGemini" *ngIf="gemini_on" style="margin: 2%; line-height: 2;">{{geminiSays}}</div>
     </div>
   </div>
   <!-- my background.js script -->
