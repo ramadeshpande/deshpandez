@@ -232,40 +232,54 @@ export class AppComponent implements OnInit {
       }
     }
   }
-
   onInputChange() {
+    const inputAreaElement = document.getElementById('inputArea') as HTMLTextAreaElement;
+    const mirrorElement = document.getElementById('mirror') as HTMLDivElement;
+  
     if (this.inputArea.trim() === '') {
       this.suggestion = ''; // Clear suggestion if input is empty
+      mirrorElement.textContent = ''; // Clear the mirror element
       return;
     }
-
+  
     // Find the first suggestion that starts with the current input
     const match = this.suggestionsList.find((s) =>
       s.toLowerCase().startsWith(this.inputArea.toLowerCase())
     );
-
+  
     // Set the remaining part of the matched suggestion as `suggestion`
     this.suggestion = match ? match.slice(this.inputArea.length) : '';
-    console.log("Suggestion:", this.suggestion);
+  
+    // Update the mirror element to show the full suggestion (input + remaining suggestion in gray)
+    if (this.suggestion) {
+      mirrorElement.textContent = this.inputArea + this.suggestion; // Show full text in gray
+    } else {
+      mirrorElement.textContent = this.inputArea; // Only show user input if no suggestion
+    }
   }
-
-
+  
   onKeyDown(event: KeyboardEvent) {
+    const inputAreaElement = document.getElementById('inputArea') as HTMLTextAreaElement;
+    const mirrorElement = document.getElementById('mirror') as HTMLDivElement;
+  
     // Handle Tab key for suggestions
     if (event.key === 'Tab' && this.suggestion) {
       event.preventDefault(); // Prevent default Tab behavior
       this.inputArea += this.suggestion; // Append the suggestion to the input
       this.suggestion = ''; // Clear the suggestion after accepting it
-      return;
+  
+      
     }
-    //new comment
   
     // Handle Enter key for form submission
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter') {
       event.preventDefault(); // Prevent newline in textarea
       this.submitChat(event); // Call submitChat function
+      
     }
   }
+
+  
 
   // Function to handle chat submission
   async submitChat(event: Event) {
@@ -322,7 +336,6 @@ export class AppComponent implements OnInit {
       this.changeResponse = "action not recognized";
     }
     this.typewriteChangeResponseBox = document.querySelector('#changeResponse');
-    this.inputArea = ""; // Clear input area after processing
     this.initializeTypewriter(this.typewriteChangeResponseBox, this.writer, "change");
     
   }
