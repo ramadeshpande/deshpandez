@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
 
   title = 'jrny-app';
   suggestion: string = ''; // Current autocomplete suggestion
-  suggestionsList: string[] = ['set a timer', 'give me a journal prompt', 'add tasks', 'remove tasks', 'switch to dark mode'];
+  suggestionsList: string[] = ['timer', 'journal prompt', 'add tasks', 'remove tasks', 'dark mode', 'light mode'];
   changeResponse = ''; // Store API response
   inputArea = ''; // Store user input
   journalInput = ''; // Store journal input
@@ -235,58 +235,59 @@ export class AppComponent implements OnInit {
     }
   }
   onInputChange() {
-    const inputAreaElement = document.getElementById('inputArea') as HTMLTextAreaElement;
     const mirrorElement = document.getElementById('mirror') as HTMLDivElement;
   
-    if (this.inputArea.trim() === '') {
-      this.suggestion = ''; // Clear suggestion if input is empty
-      mirrorElement.textContent = ''; // Clear the mirror element
+    // Clear suggestion and mirror if input is empty
+    if (!this.inputArea.trim()) {
+      this.suggestion = '';
+      mirrorElement.textContent = '';
       return;
     }
   
-    // Find the first suggestion that starts with the current input
+    // Get the last word from the input
+    const words = this.inputArea.trim().split(/\s+/);
+    const currentWord = words[words.length - 1].toLowerCase();
+  
+    // Find a matching suggestion
     const match = this.suggestionsList.find((s) =>
-      s.toLowerCase().startsWith(this.inputArea.toLowerCase())
+      s.toLowerCase().startsWith(currentWord)
     );
   
-    // Set the remaining part of the matched suggestion as `suggestion`
-    this.suggestion = match ? match.slice(this.inputArea.length) : '';
+    if (match) {
+      const remainingSuggestion = match.slice(currentWord.length);
   
-    // Update the mirror element to show the full suggestion (input + remaining suggestion in gray)
-    if (this.suggestion) {
-      mirrorElement.textContent = this.inputArea + this.suggestion; // Show full text in gray
+      // Update suggestion and mirror element
+      this.suggestion = remainingSuggestion;
+      mirrorElement.innerHTML = [
+        ...words.slice(0, -1), // All words except the current one
+        currentWord + remainingSuggestion, // Current word with suggestion
+      ].join(' ');
     } else {
-      mirrorElement.textContent = this.inputArea; // Only show user input if no suggestion
+      // No match found, show only user input
+      this.suggestion = '';
+      mirrorElement.textContent = this.inputArea;
     }
   }
   
   onKeyDown(event: KeyboardEvent) {
-    const inputAreaElement = document.getElementById('inputArea') as HTMLTextAreaElement;
-    const mirrorElement = document.getElementById('mirror') as HTMLDivElement;
-  
-    // Handle Tab key for suggestions
+    // Handle Tab key for accepting suggestions
     if (event.key === 'Tab' && this.suggestion) {
-      event.preventDefault(); // Prevent default Tab behavior
-      this.inputArea += this.suggestion; // Append the suggestion to the input
-      this.suggestion = ''; // Clear the suggestion after accepting it
-  
-      
+      event.preventDefault();
+      this.inputArea += this.suggestion;
+      this.suggestion = '';
     }
   
-    // Handle Enter key for form submission
+    // Handle Enter key for submitting the form
     if (event.key === 'Enter') {
-      event.preventDefault(); // Prevent newline in textarea
-      this.submitChat(event); // Call submitChat function
-      
+      event.preventDefault();
+      this.submitChat(event);
     }
   }
-
   
 
   // Function to handle chat submission
   async submitChat(event: Event) {
     event.preventDefault();
-    // Optionally classify or process input here
     this.classifyInput(this.inputArea);
   }
 
