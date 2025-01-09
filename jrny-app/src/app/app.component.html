@@ -23,9 +23,11 @@
         <div class="bottom-section" style="display: flex; flex-direction: column; justify-content: space-between;">       
           <div *ngIf="settings_on" id="settings-menu">
             <p style="font-size: 18px; font-weight: bold;">settings</p>
+            <p>username: {{this.username}}</p>
             <label for="dark-mode-toggle" class="settings-label">
-              <input type="checkbox" class="task-checkbox" id="dark-mode-toggle" [(ngModel)]="isDarkMode" (click)="toggleDarkMode(!isDarkMode)"> dark mode
+              <input type="checkbox" class="task-checkbox" id="dark-mode-toggle" [(ngModel)]="isDarkMode" ngDefaultControl (click)="toggleDarkMode(!isDarkMode)"> dark mode
             </label>
+
           </div>
           <div *ngIf="!isLoggedIn" class="login-container">
             <h3 id="login-label">{{ isSignUp ? 'sign up' : 'log in' }}</h3>
@@ -36,11 +38,11 @@
             <form (ngSubmit)="isSignUp ? signUp() : login()" class="chat-form" 
                   style="display: flex; flex-direction: column; margin-top: 3%; align-items: baseline;">
               <label for="username">username:</label>
-              <input type="text" id="username" [(ngModel)]="username" name="username" required 
+              <input type="text" id="username" [(ngModel)]="username" name="username" ngDefaultControl required 
                      style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;"/>
               
               <label for="password">password:</label>
-              <input type="password" id="password" [(ngModel)]="password" name="password" required 
+              <input type="password" id="password" [(ngModel)]="password" name="password" ngDefaultControl required 
                      style="height: 20px; padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: white; background-color: #282828; display: block; border-width: 0px;" />
           
               <button type="submit" 
@@ -53,8 +55,8 @@
           <div id="journal-area" *ngIf="journal_on">
             <p *ngIf="!journalSubmit" style="font-size: 18px; font-weight: bold;">journal</p>
             <p *ngIf="journalSubmit" style="font-size: 18px; font-weight: bold;">journal complete!</p>
-            <p id="prompt" style="font-size: 16px; font-weight: 100;" [(ngModel)]="prompt">{{prompt}}</p>
-            <textarea [(ngModel)]="journalInput" *ngIf="!journalSubmit" rows="20" cols="40" id="journal-input" placeholder="type your journal response here"></textarea>
+            <p id="prompt" style="font-size: 16px; font-weight: 100;" [(ngModel)]="prompt" ngDefaultControl>{{prompt}}</p>
+            <textarea [(ngModel)]="journalInput" *ngIf="!journalSubmit" rows="20" cols="40" id="journal-input" placeholder="type your journal response here" ngDefaultControl></textarea>
             <br><br>
             <div class="chat-form">
               <button id="saveJournalButton" *ngIf="!journalSubmit" style="margin-top: 5px" type="submit" (click)="saveJournal()">save</button>
@@ -82,7 +84,7 @@
           </div>
           <form id="chat-form" *ngIf="form_on == true" style="display: flex; align-items: center; margin-top: auto;" (submit)="submitChat($event)">
             <div style="position: relative; margin: 0; padding: 0; border: none; align-items: center; width: 100%;">
-              <div id="mirror" style="padding:10px; font-size:16px; font-family: sans-serif;"></div>
+              <div id="mirror" style="padding:10px; font-size:16px;"></div>
               <textarea [(ngModel)]="inputArea"
                 (input)="onInputChange()"
                 (keydown)="onKeyDown($event)"
@@ -92,6 +94,7 @@
                 cols="40"
                 placeholder="enter your command here"
                 style="height:40px; padding:10px; font-size:16px; color:white;"
+                ngDefaultControl
               >
                 {{ suggestion }}
               </textarea>
@@ -107,7 +110,7 @@
     <div id="col3" class="column column-3">
       <h2 id="active-task-head" style="font-size: 18px;">active task</h2>
       <div id="timer-card" style="cursor: pointer;">
-        <p [(ngModel)]="changeResponse" id="changeResponse" style="color: white;">{{changeResponse}}</p>
+        <p [(ngModel)]="changeResponse" id="changeResponse" style="color: white;" ngDefaultControl>{{changeResponse}}</p>
       </div>
       <h2 id="up-next-head" style="font-size: 18px;">up next</h2>
       <div id="journal-content" *ngIf="journal_on">

@@ -127,6 +127,7 @@ export class AppComponent implements OnInit {
         element.classList.add("hidden");
       });
       this.form_on = false;
+      this.settings_on = false;
       this.journalList = []; 
     }
 
@@ -206,15 +207,16 @@ export class AppComponent implements OnInit {
       });
 
       document.getElementById('up-next-head')!.textContent = "up next";
-      document.getElementById('gptTaskContent')!.style.display = "block";
-      document.getElementById('journal-content')!.style.display = "none";
       this.form_on = true;
       this.settings_on = false;
       this.journal_on = false;
       this.journalSubmit = false;
       document.getElementById('changeResponse')!.textContent = "";
       this.inputArea = "";
-    } 
+      
+    } else {
+      console.log("not logged in");
+    }
     
   }
 
