@@ -37,6 +37,8 @@ export class AppComponent implements OnInit {
 
   isSignUp = false;
 
+  private recognition: any;
+
   prompt = "";
   // Default options for typewriter in light mode
   options = {
@@ -130,11 +132,64 @@ export class AppComponent implements OnInit {
       this.settings_on = false;
       this.journalList = []; 
     }
-
+    this.initializeSpeechRecognition(); 
     // Initialize Typewriter with appropriate settings based on dark mode
     this.target = document.querySelector('.tw');
     this.initializeTypewriter(this.target, this.writer, "hello");
   }
+
+  initializeSpeechRecognition(): void {
+    if (!('webkitSpeechRecognition' in window)) {
+      console.error('Speech recognition not supported in this browser.');
+      return;
+    }
+  
+    // Initialize the Web Speech API
+    this.recognition = new (window as any).webkitSpeechRecognition();
+    this.recognition.continuous = false; // Stop after each phrase
+    this.recognition.interimResults = true; // Show interim results while speaking
+    this.recognition.lang = 'en-US'; // Set language to English (US)
+  
+    // Define event handlers for speech recognition
+    this.recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+    };
+  
+    this.recognition.onend = () => {
+      console.log('Speech recognition ended.');
+    };
+  
+    console.log('Speech recognition initialized.');
+  }
+  
+  startSpeechRecognition(target: 'inputArea' | 'journalArea'): void {
+    if (!this.recognition) {
+      console.error('Speech recognition is not initialized.');
+      return;
+    }
+  
+    console.log(`Starting speech recognition for ${target}...`);
+  
+    // Define the `onresult` handler dynamically based on the target parameter
+    this.recognition.onresult = (event: any) => {
+      if (event.results.length > 0) {
+        const result = event.results[0][0].transcript;
+        console.log(`Recognized text for ${target}:`, result);
+  
+        // Dynamically update the specified target area
+        if (target === 'inputArea') {
+          this.inputArea = result.toLowerCase();
+        } else if (target === 'journalArea') {
+          this.journalInput = result.toLowerCase();
+        }
+      }
+    };
+  
+    // Start the speech recognition process
+    this.recognition.start();
+  }
+  
+
 
   toggleSignUp() {
     this.isSignUp = !this.isSignUp;
