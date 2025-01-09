@@ -325,6 +325,9 @@ export class AppComponent implements OnInit {
       this.settings_on = false;
       document.getElementById('up-next-head')!.textContent = "gemini response";
       this.geminiSays = await this.fetchGem(query);
+      this.inputArea = "";
+      this.suggestion = "";
+      document.getElementById('mirror')!.textContent = "";
       this.typewriteAskGeminiBox = document.querySelector('#askGemini');
       this.initializeTypewriter(this.typewriteAskGeminiBox, this.writer, "gemini");
     }
