@@ -335,16 +335,20 @@ export class AppComponent implements OnInit {
   onInputChange() {
     const mirrorElement = document.getElementById('mirror') as HTMLDivElement;
   
+    // Replace multiple consecutive spaces with a single space
+    this.inputArea = this.inputArea.replace(/\s{2,}/g, ' ');
+  
     // Clear suggestion and mirror if input is empty
-    if (!this.inputArea.trim()) {
+    if (!this.inputArea) {
       this.suggestion = '';
       mirrorElement.textContent = '';
       return;
     }
   
-    // Get the last word from the input
-    const words = this.inputArea.trim().split(/\s+/);
-    const currentWord = words[words.length - 1].toLowerCase();
+    // Find the position of the last word, accounting for all spaces
+    const lastSpaceIndex = this.inputArea.lastIndexOf(' '); // Find the last space in the input
+    const precedingText = this.inputArea.slice(0, lastSpaceIndex + 1); // Everything before and including the last space
+    const currentWord = this.inputArea.slice(lastSpaceIndex + 1).toLowerCase(); // Extract the last "word" after the last space
   
     // Find a matching suggestion
     const match = this.suggestionsList.find((s) =>
@@ -356,16 +360,16 @@ export class AppComponent implements OnInit {
   
       // Update suggestion and mirror element
       this.suggestion = remainingSuggestion;
-      mirrorElement.innerHTML = [
-        ...words.slice(0, -1), // All words except the current one
-        currentWord + remainingSuggestion, // Current word with suggestion
-      ].join(' ');
+      mirrorElement.textContent = precedingText + currentWord + remainingSuggestion; // Combine preceding text, current word, and suggestion
     } else {
-      // No match found, show only user input
+      // No match found, show only user input with all spaces preserved
       this.suggestion = '';
-      mirrorElement.textContent = this.inputArea;
+      mirrorElement.textContent = this.inputArea; // Preserve all spaces in the input
     }
   }
+  
+  
+  
   
   onKeyDown(event: KeyboardEvent) {
     // Handle Tab key for accepting suggestions
@@ -581,8 +585,6 @@ export class AppComponent implements OnInit {
         typer = new Typewriter(location, this.isDarkMode ? this.fast_dark_noloop_options : this.fast_light_noloop_options);
         typer.type(this.geminiSays)
           .removeCursor()
-          .rest(10000)
-          .clear()
           .start();  
       }
     }
