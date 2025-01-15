@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiKey: '${API_KEY}' // Placeholder to be replaced
+    apiKey: '' // Placeholder to be replaced
   };
