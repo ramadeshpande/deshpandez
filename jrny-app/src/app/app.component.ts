@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Location, CommonModule, NgIf } from '@angular/common';
+import { environment } from './environment';
 
 // @ts-ignore
 import Typewriter from 't-writer.js';
@@ -14,7 +15,6 @@ import { timeStamp } from 'console';
 })
 export class AppComponent implements OnInit {
   constructor(private er: ElementRef, private location: Location) {}
-  //testing
 
   title = 'jrny-app';
   suggestion: string = ''; // Current autocomplete suggestion
@@ -25,8 +25,7 @@ export class AppComponent implements OnInit {
   tasks: any[] = []; // In-memory task storage
   journalList: any[] = []; // In-memory journal storage
   isDarkMode: boolean = false; // Default value for dark mode
-  apiKey = "AIzaSyBDqNepYPVmQiuPVXRbQxz3rwF6C0z_rF8"; // Replace with your actual API key
-  apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${this.apiKey}`;
+  apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${environment.apiKey}`; // API endpoint
   target: any;
   typewriteChangeResponseBox: any;
   typewriteAskGeminiBox: any;

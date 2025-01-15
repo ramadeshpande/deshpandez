@@ -25,6 +25,8 @@ build:
   script:
     - cd jrny-app  # Ensure you're in the correct directory
     - npm install  # Install dependencies
+    - |
+      sed -i "s|apiKey: ''|apiKey: '${API_KEY}'|" src/app/environment.ts
     - ng build --configuration production  # Build the Angular app for production
     - ls dist/   # List files in dist folder to verify if it exists and contains output (ensure index.html exists)
     - zip -r dist/my-angular-app.zip dist/jrny-app/browser/  # Zip the correct build output (jrny-app/browser)
