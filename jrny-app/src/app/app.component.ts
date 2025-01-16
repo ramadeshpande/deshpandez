@@ -139,7 +139,7 @@ export class AppComponent implements OnInit {
     if (token) {
       this.isLoggedIn = true;
       this.username = localStorage.getItem('username') || "";
-      console.log("user " + localStorage.getItem('username') + " is logged in: " + localStorage.getItem('jwtToken'));
+      console.log("user " + localStorage.getItem('username') + " is logged in.");
       this.otherElementsBottom!.forEach(function(element) {
         element.classList.remove("hidden");
       });
@@ -184,12 +184,6 @@ export class AppComponent implements OnInit {
     this.recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
     };
-  
-    this.recognition.onend = () => {
-      console.log('Speech recognition ended.');
-    };
-  
-    console.log('Speech recognition initialized.');
   }
   
   startSpeechRecognition(target: 'inputArea' | 'journalArea'): void {
@@ -198,13 +192,10 @@ export class AppComponent implements OnInit {
       return;
     }
   
-    console.log(`Starting speech recognition for ${target}...`);
-  
     // Define the `onresult` handler dynamically based on the target parameter
     this.recognition.onresult = (event: any) => {
       if (event.results.length > 0) {
         const result = event.results[0][0].transcript;
-        console.log(`Recognized text for ${target}:`, result);
   
         // Dynamically update the specified target area
         if (target === 'inputArea') {
@@ -240,7 +231,6 @@ export class AppComponent implements OnInit {
       const data = await response.json();
       if (data.token) {
         localStorage.setItem('jwtToken', data.token); // Store JWT token in localStorage
-        console.log("user logged in: " + localStorage.getItem('jwtToken'));
         this.isLoggedIn = true;
         localStorage.setItem('username', this.username);
         this.goHome(); // Clear the screen and proceed to the app
@@ -289,7 +279,7 @@ export class AppComponent implements OnInit {
 
   goHome() {
     if (this.isLoggedIn) {
-      console.log("logged in: " + localStorage.getItem('jwtToken'));
+      console.log("logged in: ");
       this.ngOnInit();
       this.otherElementsBottom!.forEach(function(element) {
           element.classList.remove("hidden");
