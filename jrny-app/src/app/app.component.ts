@@ -399,9 +399,9 @@ export class AppComponent implements OnInit {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{
-            parts: [{
-              text: '' + prompt + this.inputArea // Concatenate prompt with inputArea
-            }]
+            parts: [
+              { role: 'system', text: "You are a helpful assistant who answers user queries in a friendly and short, succint manner." },
+              { role: 'user', text: '' + prompt }]
           }]
         })
       });
