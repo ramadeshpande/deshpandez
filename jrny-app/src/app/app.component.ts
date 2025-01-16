@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   tasks: any[] = []; // In-memory task storage
   journalList: any[] = []; // In-memory journal storage
   isDarkMode: boolean = false; // Default value for dark mode
-  apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${environment}`;
+  apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${environment.apiKey}`;
   target: any;
   typewriteChangeResponseBox: any;
   typewriteAskGeminiBox: any;
