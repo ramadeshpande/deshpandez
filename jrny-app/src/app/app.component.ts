@@ -138,6 +138,8 @@ export class AppComponent implements OnInit {
     
     if (token) {
       this.isLoggedIn = true;
+      this.username = localStorage.getItem('username') || "";
+      console.log("user " + localStorage.getItem('username') + " is logged in: " + localStorage.getItem('jwtToken'));
       this.otherElementsBottom!.forEach(function(element) {
         element.classList.remove("hidden");
       });
@@ -150,7 +152,9 @@ export class AppComponent implements OnInit {
         this.journalList = []; // Handle failure gracefully
       }
     } else {
+      console.log("not logged in");
       this.isLoggedIn = false;
+      this.logout();
       this.otherElementsBottom!.forEach(function(element) {
         element.classList.add("hidden");
       });
@@ -236,11 +240,15 @@ export class AppComponent implements OnInit {
       const data = await response.json();
       if (data.token) {
         localStorage.setItem('jwtToken', data.token); // Store JWT token in localStorage
+        console.log("user logged in: " + localStorage.getItem('jwtToken'));
         this.isLoggedIn = true;
         localStorage.setItem('username', this.username);
         this.goHome(); // Clear the screen and proceed to the app
         this.journalList = await this.retrieveJournals(localStorage.getItem('username') || "");
         this.journalList.reverse();
+      } else {
+        console.log("not logged in");
+        this.logout();
       }
     } catch (error) {
       this.errorMessage = 'invalid username or password. please try again.';
@@ -279,9 +287,9 @@ export class AppComponent implements OnInit {
     this.errorMessage = '';
   }
 
-
   goHome() {
     if (this.isLoggedIn) {
+      console.log("logged in: " + localStorage.getItem('jwtToken'));
       this.ngOnInit();
       this.otherElementsBottom!.forEach(function(element) {
           element.classList.remove("hidden");
@@ -298,8 +306,8 @@ export class AppComponent implements OnInit {
       
     } else {
       console.log("not logged in");
+      this.logout();
     }
-    
   }
 
   showSettings() {
