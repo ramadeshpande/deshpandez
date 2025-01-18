@@ -27,7 +27,6 @@
             <label for="dark-mode-toggle" class="settings-label">
               <input type="checkbox" class="task-checkbox" id="dark-mode-toggle" [(ngModel)]="isDarkMode" ngDefaultControl (click)="toggleDarkMode(!isDarkMode)"> dark mode
             </label>
-
           </div>
           <div *ngIf="!isLoggedIn" class="login-container">
             <h3 id="login-label">{{ isSignUp ? 'sign up' : 'log in' }}</h3>
@@ -51,7 +50,7 @@
             
             <p *ngIf="errorMessage" class="error" style="color: red">{{ errorMessage }}</p>
           </div>
-          
+          <!-- <div id="myChart" style="width: 100%; height: 100%;"></div> -->
           <div id="journal-area" *ngIf="journal_on">
             <p *ngIf="!journalSubmit" style="font-size: 18px; font-weight: bold;">journal</p>
             <p *ngIf="journalSubmit" style="font-size: 18px; font-weight: bold;">journal complete!</p>
