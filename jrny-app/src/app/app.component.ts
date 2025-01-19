@@ -2,7 +2,6 @@ import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Location, CommonModule, NgIf } from '@angular/common';
 import { environment } from './environment';
-import { AgCharts } from 'ag-charts-community';
 
 // @ts-ignore
 import Typewriter from 't-writer.js';
@@ -112,85 +111,6 @@ export class AppComponent implements OnInit {
   username = ''; // Store username
   password = ''; // Store password
   errorMessage = ''; // Display error messages if login fails
-
-//   ngAfterViewInit() {
-//     const chartContainer = document.getElementById('myChart');
-//     if (chartContainer) {
-//         const chart = AgCharts.create({
-//             container: chartContainer,
-//             data: [
-//                 { date: new Date('2025-01-10'), sentiment: 0.2 },
-//                 { date: new Date('2025-01-11'), sentiment: -0.5 },
-//                 { date: new Date('2025-01-12'), sentiment: 0.1 },
-//                 { date: new Date('2025-01-13'), sentiment: 0.8 },
-//                 { date: new Date('2025-01-14'), sentiment: -0.3 },
-//                 { date: new Date('2025-01-15'), sentiment: 0.7 },
-//             ],
-//             title: {
-//                 text: 'Sentiment Trend',
-//                 fontSize: 18,
-//             },
-//             series: [
-//                 {
-//                     type: 'line',
-//                     xKey: 'date',
-//                     yKey: 'sentiment',
-//                     yName: 'Sentiment',
-//                     stroke: '#000000', // Set the line color to black
-//                     strokeWidth: 2,
-//                     marker: {
-//                         shape: 'circle',
-//                         size: 20,
-//                         itemStyler: (params) => {
-//                             const sentiment = params.datum.sentiment;
-//                             if (sentiment > 0.5) {
-//                                 return { fill: '#228B22' }; // Forest Green for highly positive sentiment
-//                             } else if (sentiment > 0) {
-//                                 return { fill: '#50C878' }; // Emerald Green for positive sentiment
-//                             } else if (sentiment === 0) {
-//                                 return { fill: '#FFD700' }; // Yellow for neutral sentiment
-//                             } else if (sentiment > -0.5) {
-//                                 return { fill: '#A17A50' }; // Terracotta Red for negative sentiment
-//                             } else {
-//                                 return { fill: '#9E2A2B' }; // Cherry Red for highly negative sentiment
-//                             }
-//                         }
-//                     },
-//                 },
-//             ],
-//             axes: [
-//                 {
-//                     type: 'time',
-//                     position: 'bottom',
-//                     title: {
-//                         text: 'Date',
-//                     },
-//                 },
-//                 {
-//                     type: 'number',
-//                     position: 'left',
-//                     title: {
-//                         text: 'Sentiment',
-//                     },
-//                 },
-//             ],
-//             animation: {
-//                 enabled: true, // Enable animations
-//                 duration: 3000, // Animation duration in milliseconds
-//             },
-//         });
-
-//         // Custom animation logic to show dots first and then animate the line
-//         setTimeout(() => {
-//             const series = (chart as any).series[0];
-//             series.strokeOpacity = 1; // Make the line visible after dots are displayed
-//         }, 2000); // Delay for dots to appear first (adjust as needed)
-//     } else {
-//         console.error('Chart container not found');
-//     }
-// }
-
-  
 
   async ngOnInit(): Promise<void> {
     this.topSection = document.querySelector(".top-section");
@@ -473,12 +393,13 @@ export class AppComponent implements OnInit {
     try {
       const response = await fetch(this.apiUrl, {
         method: 'POST',
+        //You are a helpful assistant who answers user queries in a friendly and short, succint manner."
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{
-            parts: [
-              { role: 'system', text: "You are a helpful assistant who answers user queries in a friendly and short, succint manner." },
-              { role: 'user', text: '' + prompt }]
+            parts: [{
+              text: '' + prompt + this.inputArea // Concatenate prompt with inputArea
+            }]
           }]
         })
       });
