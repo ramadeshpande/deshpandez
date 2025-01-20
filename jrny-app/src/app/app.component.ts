@@ -557,7 +557,7 @@ export class AppComponent implements OnInit {
         typer.type('hello, there')
           .rest(500)
           .remove(5)
-          .type('friend')
+          .type(localStorage.getItem('username') ? localStorage.getItem('username') : 'friend')
           .rest(900)
           .clear()
           .rest(500)
