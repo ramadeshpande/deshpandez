@@ -23,10 +23,30 @@
         <div class="bottom-section" style="display: flex; flex-direction: column; justify-content: space-between;">       
           <div *ngIf="settings_on" id="settings-menu">
             <p style="font-size: 18px; font-weight: bold;">settings</p>
-            <p>username: {{this.username}}</p>
-            <label for="dark-mode-toggle" class="settings-label">
+            <a style="text-decoration: underline; border-width: 0px; display: flex; background-color: transparent; color: blueviolet; text-align: left; cursor: pointer; margin-bottom: 2%" 
+               (click)="toggleDarkModeForm()">
+              change display
+            </a>
+            <label for="dark-mode-toggle" class="settings-label" style="margin-bottom: 2%" *ngIf="changedisplay_on">
               <input type="checkbox" class="task-checkbox" id="dark-mode-toggle" [(ngModel)]="isDarkMode" ngDefaultControl (click)="toggleDarkMode(!isDarkMode)"> dark mode
             </label>
+            <a style="text-decoration: underline; border-width: 0px; display: flex; background-color: transparent; color: blueviolet; text-align: left; cursor: pointer;" 
+               (click)="toggleChangePassForm()">
+              change password
+            </a>
+            <form (ngSubmit)="changePass()" class="chat-form" *ngIf="changepass_on"
+                  style="display: flex; flex-direction: column; align-items: start; margin-top: 2%">
+              <label for="password">confirm current password:</label>
+              <input type="password" id="curr-pass" [(ngModel)]="currpw" name="password" ngDefaultControl required 
+                      style="height: 20px; padding: 10px; margin: 0.5% 0; font-size: 16px; border-radius: 10px; color: black; display: block; border-width: 1px;" />
+              
+              <label for="password">enter new password:</label>
+              <input type="password" id="new-pass" [(ngModel)]="newpw" name="password" ngDefaultControl required 
+                     style="height: 20px; padding: 10px; margin: 0.5% 0; font-size: 16px; border-radius: 10px; color: black; display: block; border-width: 1px;" />
+          
+              <button type="submit" style="padding: 10px; margin: 1% 0; font-size: 16px; border-radius: 10px; color: black; display: flex; border-width: 1px;">submit</button>
+              <p *ngIf="errorMessage" class="error" style="color: red">{{ errorMessage }}</p>
+            </form>
           </div>
           <div *ngIf="!isLoggedIn" class="login-container">
             <h3 id="login-label">{{ isSignUp ? 'sign up' : 'log in' }}</h3>

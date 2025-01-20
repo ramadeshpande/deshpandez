@@ -5,7 +5,8 @@ import { environment } from './environment';
 
 // @ts-ignore
 import Typewriter from 't-writer.js';
-import { timeStamp } from 'console';
+import { error } from 'console';
+
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -35,7 +36,11 @@ export class AppComponent implements OnInit {
   journalSubmit: boolean = false;
   settings_on: boolean = false;
   gemini_on: boolean = false;
+  changepass_on: boolean = false;
+  changedisplay_on: boolean = false;
   geminiSays = '';
+  currpw = "";
+  newpw = "";
 
   isSignUp = false;
 
@@ -509,17 +514,6 @@ export class AppComponent implements OnInit {
     entry.expanded = !entry.expanded;
   }
 
-  grabUsername() {
-    this.form_on = false;
-    this.journalArea!.style.display = "none";
-        this.otherElementsBottom.forEach(function(element) {
-            element.classList.add("hidden");
-        });
-      document.getElementById('up-next-head')!.textContent = "up next";
-      document.getElementById('gptTaskContent')!.style.display = "none";
-      document.getElementById('journal-content')!.style.display = "none";
-
-  }
   async generateJournal() {
     let ans = await this.fetchGem(`Can you generate one short journal question for me about self reflection, goal setting, or self improvement? No heading or extra characters.`);
     ans = ans.toLowerCase();
@@ -543,6 +537,51 @@ export class AppComponent implements OnInit {
     } else {
       document.body.classList.remove("inverted-colors");
     }
+  }
+  async changePass() {
+    const azureFunctionUrl = "https://jrny-googlecal.azurewebsites.net/api/change_pw";
+    this.username = localStorage.getItem('username') || "";
+
+    try {
+        // Prepare the data payload
+        let payload: any = {
+            username: this.username,
+            current_password: this.currpw,
+            new_password: this.newpw
+        };
+
+        // Make the POST request to the Azure Function
+        const response = await fetch(azureFunctionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload), // Convert payload to JSON
+        });
+
+        // Handle the response
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            this.errorMessage = 'failed to change password. ' + errorMessage.toLowerCase();
+            throw new Error(`Failed to change password: ${errorMessage}`);
+        }
+
+        const responseBody = await response.text();
+        console.log('Successfully changed password:', responseBody);
+        this.errorMessage = 'successfully changed password!';
+        this.newpw = "";
+        this.currpw = "";
+    } catch (error) {
+        this.journalSubmit = false;
+        console.error('Error changing password:', error);
+    }
+  }
+
+  toggleChangePassForm() {
+    this.changepass_on = !this.changepass_on;
+  }
+  toggleDarkModeForm() {
+    this.changedisplay_on = !this.changedisplay_on;
   }
 
   initializeTypewriter(location: any, typer: any, what: string) {
