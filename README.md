@@ -1,5 +1,4 @@
 # deshpandez.com (a.k.a journey or jrny)
-Choose a self-explaining name for your project.
 
 ## Description
 This is an Angular app where the code is up to date with the deployed version of www.deshpandez.com. The system is called "journey" or "jrny" and it is meant to be an AI productivity dashboard/assistant. 
